@@ -1,12 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- https://gitseanebasan01.github.io/noteTakingApp/site00/ -->
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <title>Note Taking App</title>
 </head>
 <body>
-    <h1>Hello testing</h1>
+    
+    <main class="notes" id="app">
+
+        <div class="side-panel">
+
+            <div class="side__profile">
+                <img src="" alt="Profile Picture">
+                <div class="side__profile-name"></div>
+                <div class="side__profile-status"></div>
+            </div>
+
+
+            <input class="side__search" type="text" placeholder="Search Canvas or Cards">
+            
+
+            <div class="side__main-canvas"></div>
+
+            <div class="side__canvas">
+                <button class="canvas__add" type="button">Add Canvas</button>
+                
+                <div class="side__canvas-list">
+                    <!-- List of canvas -->
+                </div>
+            </div>
+
+
+
+            <div class="side__favourites">
+                <div class="side__favourite-canvas">
+                    <!-- List of favourite canvas -->
+                </div>
+                <div class="side__favourite-cards">
+                    <!-- List of favourite cards -->
+                </div>
+            </div>
+
+
+            <div class="side__recents">
+                <!-- List of recently opened canvas or cards -->
+            </div>
+
+
+
+            <div class="side__line-break"></div>
+
+            <footer class="side__footer">
+                <div class="side__footer-updates"></div>
+                <div class="side__footer-settings"></div>
+                <div class="side__footer-faqs"></div>
+            </footer>
+            
+        </div>
+
+
+
+
+
+        <button class="card__add" type="button">Add Card</button>
+
+
+
+
+
+        <div class="canvas__preview">
+
+            
+            <div class="canvas__card-holder">
+                
+                <div class="canvas__card-item canvas__card-item--selected">
+                    <div class="card__small-title">Lecture Notes</div>
+                    <div class="card__small-body">Trying to learn something.</div>
+                    <div class="card__small-updated">Thursday 8:45pm</div>
+                </div>
+
+            </div>
+
+            <div class="canvas__card-preview">
+                <input class="card__title" type="text" placeholder="Premade Title Will Be Here">
+                <textarea class="card__body">Type here form something.</textarea>
+            </div>
+            
+        </div>
+        
+        
+    </main>
+    
 </body>
 </html>
