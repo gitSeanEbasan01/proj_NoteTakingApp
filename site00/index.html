@@ -15,12 +15,20 @@
     
     <main class="notes" id="app">
 
+
+        <div class="top-bar">
+            <button class="top__toggle-side" type="button"></button>
+            <div class="top__current-canvas">Main Canvas</div>
+        </div>
+
+
+
         <div class="side-panel">
 
             <div class="side__profile">
                 <img src="" alt="Profile Picture">
-                <div class="side__profile-name"></div>
-                <div class="side__profile-status"></div>
+                <div class="side__profile-name">Sean Ebasan</div>
+                <div class="side__profile-status">Online</div>
             </div>
 
 
@@ -69,7 +77,7 @@
 
 
 
-        <button class="card__add" type="button">Add Card</button>
+        <button class="card__add" type="button"></button>
 
 
 
@@ -81,6 +89,8 @@
             <div class="canvas__card-holder">
                 
                 <div class="canvas__card-item canvas__card-item--selected">
+                    <div class="card__border-highlight"></div>
+                    
                     <div class="card__small-title">Lecture Notes</div>
                     <div class="card__small-body">Trying to learn something.</div>
                     <div class="card__small-updated">Thursday 8:45pm</div>

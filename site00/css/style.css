@@ -1,7 +1,124 @@
 * {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
-font-family: 'Lato', sans-serif;
-letter-spacing: -0.7px;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Lato', sans-serif;
+    letter-spacing: -0.7px;
+}
+
+.notes{
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #7f5539;
+}
+
+.top-bar{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    /* background-color: springgreen; */
+    background-color: #7f5539;
+}
+
+.side-panel{
+    position: absolute;
+    top: 40px;
+    left: 0;
+    width: 200px;
+    height: calc(100% - 40px);
+    /* background-color: aqua; */
+    background-color: #7f5539;
+}
+
+
+.card__add{
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 250px;
+    width: 40px;
+    height: 40px;
+    z-index: 3;
+    
+    background-color: #7f5539;
+    border: 2px solid #444444;
+    border-radius: 4px;
+    /* box-shadow: 0px 2px 10px 0px; */
+}
+.card__add:hover{
+    background-color: #9c6644;
+}
+
+
+
+/* ----------------------- CANVAS PREVIEW ----------------------- */
+
+.canvas__preview{
+    position: absolute;
+    top: 40px;
+    left: 200px;
+    width: calc(100% - 215px);
+    height: calc(100% - 55px);
+    border-radius: 10px;
+    z-index: 2;
+    
+    /* background-color: yellow; */
+    background-color: #ddb892;
+}
+
+.canvas__card-holder{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    z-index: 1;
+
+    /* background-color: red;  */
+}
+
+.canvas__card-item{
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 70%;
+    left: 40%;
+    width: 200px;
+    height: 150px;
+    border: 8px solid #7f5539;
+    border-radius: 20px;
+
+    background-color: #b08968;
+}
+.card__border-highlight{
+    position: inherit;
+    top: -10px;
+    left: -10px;
+    width: calc(100% + 10px);
+    height: calc(100% + 10px);
+    border: 2px solid #ede0d4;
+    border-radius: 20px 20px 13px 17px;
+}
+
+
+
+
+
+
+
+.canvas__card-preview{
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 30%;
+    left: 70%;
+    width: 300px;
+    height: 400px;
+    z-index: 2;
+    
+    background-color: aqua;
 }
