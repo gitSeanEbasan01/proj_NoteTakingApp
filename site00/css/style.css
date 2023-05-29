@@ -15,15 +15,43 @@
     background-color: #7f5539;
 }
 
+
+
+/* ----------------------- TOP BAR ----------------------- */
+
 .top-bar{
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 40px;
-    /* background-color: springgreen; */
     background-color: #7f5539;
 }
+
+.top__toggle-side{
+    position: absolute;
+    top: calc(15px / 2);
+    left: calc(200px + 15px);
+    width: 25px;
+    height: 25px;
+
+    background-color: #3E3629;
+}
+
+.top__current-canvas{
+    position: absolute;
+    transform: translate(0 ,-50%);
+    top: 50%;
+    left: calc(200px + 60px);
+}
+
+
+
+
+
+
+/* ----------------------- SIDE PANEL ----------------------- */
+
 
 .side-panel{
     position: absolute;
@@ -31,9 +59,134 @@
     left: 0;
     width: 200px;
     height: calc(100% - 40px);
-    /* background-color: aqua; */
     background-color: #7f5539;
 }
+
+
+/* ----- side profile ----- */
+.side__profile{
+    position: absolute;
+    top: 3%;
+    left: 10%;
+    width: 80%;
+    height: 60px;
+    border-radius: 5px;
+
+    background-color: #9c6644;
+}
+
+
+/* ----- side search ----- */
+.side__search{
+    position: absolute;
+    top: 15%;
+    left: 5%;
+    width: 90%;
+    border-radius: 5px;
+    
+}
+
+
+/* ----- side main canvas ----- */
+.side__main-canvas{
+    position: absolute;
+    top: 20%;
+    left: 10%;
+    width: 80%;
+    height: 20px;
+    border-radius: 5px;
+
+    background-color: #3E3629;
+}
+
+
+/* ----- side canvas ----- */
+.side__canvas{
+    position: absolute;
+    top: 25%;
+    left: 5%;
+    width: 90%;
+    height: 100px;
+    padding: 0;
+    border-radius: 5px;
+    overflow-y: hidden;
+
+    background-color: #9c6644;
+}
+
+.canvas__add{
+    position: absolute;
+    top: 15px;
+    left: 5%;
+    width: 90%;
+    height: 20px;
+    border-radius: 5px;
+
+    color: #ede0d4;
+    background-color: #7f5539;
+}
+
+.side__canvas-list{
+    position: absolute;
+    top: 50px;
+    left: 5%;
+    width: 90%;
+    height: 100px;
+    border-radius: 5px;
+
+    background-color: #594B38;
+}
+.side__canvas-item{
+    margin-left: 5%;
+    width: 90%;
+    height: 20px;
+    
+    border-radius: 5px;
+
+    color: #ede0d4;
+    background-color: #3E3629;
+}
+.first-item{
+    margin-top: 5%;
+    /* background-color: red; */
+}
+
+
+
+/* ----- side favourites ----- */
+.side__favourites{
+    position: absolute;
+    top: 49%;
+    left: 5%;
+    width: 90%;
+    height: 100px;
+    padding: 0;
+    border-radius: 5px;
+    overflow-y: hidden;
+
+    background-color: #9c6644;
+}
+
+
+/* ----- side recents ----- */
+.side__recents{
+    position: absolute;
+    top: 65%;
+    left: 5%;
+    width: 90%;
+    height: 100px;
+    padding: 0;
+    border-radius: 5px;
+    overflow-y: hidden;
+
+    background-color: #9c6644;
+}
+
+
+
+
+
+/* ----------------------- ADD CARD ----------------------- */
 
 
 .card__add{
@@ -152,7 +305,7 @@
     position: inherit;
     border: none;
     outline: none;
-    width: 100%;
+    width: 90%;
     transform: translate(-50%, 0);
 }
 .card__title{
@@ -164,18 +317,18 @@
     font-weight: bold;
 
     color: #000;
-    background-color: #b08968;
+    /* background-color: #b08968; */
 }
 .card__body{
     top: 15%;
     left: 50%;
+    height: 30px;
     
     text-align: center;
-    flex-grow: 1;
     font-size: 1.2em;
     line-height: 1.5;
-    /* margin-top: 2.3em; */
     resize: none;
+    overflow-y: hidden;
 
-    background-color: #b08968;
+    /* background-color: #b08968; */
 }
