@@ -1,8 +1,9 @@
 export default class CanvasView {
 
-    constructor(root, { onCanvasAdd } = {}) {
+    constructor(root, { onCanvasAdd, onCanvasDelete } = {}) {
         this.root = root;
         this.onCanvasAdd = onCanvasAdd;
+        this.onCanvasDelete = onCanvasDelete;
 
         this.root.innerHTML = `
             <div class="top-bar">
@@ -30,8 +31,6 @@ export default class CanvasView {
                     <button class="canvas__add" type="button">Add Canvas</button>
                     
                     <div class="side__canvas-list">
-                        <button class="side__canvas-item first-item">Click Here</button>
-                        <button class="side__canvas-item">Click Here</button>
                     </div>
                 </div>
 
@@ -102,6 +101,7 @@ export default class CanvasView {
             this.onCanvasAdd();
         });
 
+        // - Adjusting the side__canvas based on its scrollHeight.
         window.addEventListener('DOMContentLoaded', () => {
             sideCanvas.style.height = `${sideCanvas.scrollHeight + 15}px`;
         });
@@ -109,6 +109,8 @@ export default class CanvasView {
         
     }
 
+
+    // - Adding a canvas button inside the canvas-list -------------
 
     _createListItemHTML(id, title) {
 
@@ -120,16 +122,39 @@ export default class CanvasView {
 
     updateCanvasList(canvas) {
 
+        // - Adding a canvas button inside the canvas-list -------------
+
         const canvasListContainer = this.root.querySelector(".side__canvas-list");
 
         // - Empty List
         canvasListContainer.innerHTML = "";
 
+        // - Adding a canvas button inside the canvas-list -------------
         for (const canva of canvas) {
             const html = this._createListItemHTML(canva.id, canva.title);
 
             canvasListContainer.insertAdjacentHTML("beforeend", html);
         }
+
+
+
+
+
+
+        // - SELECT/DELETE events for each item in the list -------------
+
+        canvasListContainer.querySelectorAll(".side__canvas-item").forEach((canvasItem => {
+
+
+            // For deleting
+            canvasItem.addEventListener("dblclick", () => {
+                const doDelete = confirm("Are you sure you want to delete this note?")
+
+                if (doDelete) {
+                    this.onCanvasDelete(canvasItem.dataset.canvasId);
+                }
+            });
+        }));
         
     }
     

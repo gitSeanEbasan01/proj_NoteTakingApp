@@ -1,6 +1,7 @@
 export default class CanvasAPI{
 
     // - static function defined within the class. It can be called directly without requiring an instance.
+    // - This is for just getting all the elements inside the local storage and that's it -------------
     static getAllCanvas() {
 
         // - Collects all the canvas item in the local storage using the JSON.parse() function || but if there's nothing, create an empty array []
@@ -16,6 +17,7 @@ export default class CanvasAPI{
         
     }
 
+    // - For saving canvases to be added inside the local storage -------------
     static saveCanvas(canvasToSave) {
 
         // - canvas, this is an array/data structure that stores and holds multiple items or elements. 
@@ -51,5 +53,16 @@ export default class CanvasAPI{
         // - JSON - JavaScript Object Notation - is a format that represents a data structure.
         localStorage.setItem("notesapp-canvas", JSON.stringify(canvas));
     }
+    
+
+    // - Deleting a canvas -------------
+    static deleteCanvas(id) {
+        const canvas = CanvasAPI.getAllCanvas();
+        // Filter or show each canvas on the list that is not (!=) in the passed id
+        const newCanvas = canvas.filter(canva => canva.id != id);
+
+        localStorage.setItem("notesapp-canvas", JSON.stringify(newCanvas));
+    }
+
     
 }
