@@ -1,14 +1,27 @@
 import CanvasAPI from "./canvasAPI.js";
+import CanvasView from "./canvasView.js";
+
+const main = document.getElementById("app");
+const getCanvas = CanvasAPI.getAllCanvas();
+
+CanvasAPI.saveCanvas({
+    id: 796277,
+    title: "Something Else I Mean!"
+})
+
+console.log(getCanvas);
 
 
-let sideCanvas = document.querySelector('.side__canvas');
+const view = new CanvasView(main, {
+    onCanvasAdd() {
+        const newCanvas = {
+            title: "New CanvasAPI"
+        };
 
-
-window.addEventListener('DOMContentLoaded', () => {
-    sideCanvas.style.height = `${sideCanvas.scrollHeight + 15}px`;
+        CanvasAPI.saveCanvas(newCanvas);
+        view.updateCanvasList(CanvasAPI.getAllCanvas());
+    },
 });
 
 
-const canvas = CanvasAPI.getAllCanvas();
 
-console.log(canvas);
