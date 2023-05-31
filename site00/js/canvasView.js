@@ -1,3 +1,5 @@
+import CanvasAPI from "./canvasAPI.js";
+
 export default class CanvasView {
 
     constructor(root, { onCanvasAdd, onCanvasDelete } = {}) {
@@ -96,21 +98,97 @@ export default class CanvasView {
         const btnAddCavnas = this.root.querySelector(".canvas__add");
         // - Adjusting the side__canvas based on its scrollHeight.
         const sideCanvas = this.root.querySelector(".side__canvas");
+        const sideCanvasList = this.root.querySelector(".side__canvas-list");
 
         btnAddCavnas.addEventListener('click', () => {
             this.onCanvasAdd();
         });
 
-        // - Adjusting the side__canvas based on its scrollHeight.
+
+        // - Adjusting the side__canvas based on its scrollHeight.  ----------
         window.addEventListener('DOMContentLoaded', () => {
-            sideCanvas.style.height = `${sideCanvas.scrollHeight + 15}px`;
+
+            const canvas = CanvasAPI.getAllCanvas();
+
+            if (canvas.length < 7) {
+
+                sideCanvasList.style.height = "100px";
+                sideCanvasList.style.height = `${sideCanvasList.scrollHeight + 8}px`;
+                
+                sideCanvas.style.height = `${sideCanvas.scrollHeight + 15}px`;
+            } else {
+                
+                sideCanvasList.style.height = "163px";
+                sideCanvas.style.height = `${sideCanvas.scrollHeight + 15}px`;
+
+                if (canvas.length > 7) {
+                    sideCanvasList.style.overflowY = "scroll";
+                    sideCanvasList.style.paddingBottom = "8px";
+                } else {
+                    sideCanvasList.style.overflowY = "hidden";
+                    sideCanvasList.style.paddingBottom = "0";
+                }
+            }
+            
         });
         
         
     }
 
 
-    // - Adding a canvas button inside the canvas-list -------------
+    // Update Canvas containers height adjustments ------
+
+    updateCanvasHeigth(canvas) {
+
+        const sideCanvas = this.root.querySelector(".side__canvas");
+        const sideCanvasList = this.root.querySelector(".side__canvas-list");
+        
+
+        if (sideCanvasList.style.height < "163px") {
+            sideCanvasList.style.height = "100px";
+            sideCanvasList.style.height = `${sideCanvasList.scrollHeight + 8}px`;
+            
+            sideCanvas.style.height = "150px";
+            sideCanvas.style.height = `${sideCanvas.scrollHeight + 15}px`;
+        } else {
+
+            if (canvas.length < 7) {
+
+                sideCanvasList.style.height = "100px";
+                sideCanvasList.style.height = `${sideCanvasList.scrollHeight + 8}px`;
+                
+                sideCanvas.style.height = "150px";
+                sideCanvas.style.height = `${sideCanvas.scrollHeight + 15}px`;
+
+            } if (canvas.length >= 7) {
+
+                if (canvas.length > 7) {
+                    sideCanvasList.style.overflowY = "scroll";
+                    sideCanvasList.style.paddingBottom = "8px";
+                } else {
+                    sideCanvasList.style.overflowY = "hidden";
+                    sideCanvasList.style.paddingBottom = "0";
+                }
+
+                sideCanvasList.style.height = "163px";
+
+                sideCanvas.style.height = `${sideCanvas.scrollHeight}px`;
+
+            }
+
+        }
+        
+    }
+    
+    
+    
+    
+    
+    
+    
+
+
+    // - Adding a canvas inside the canvas-list -------------
 
     _createListItemHTML(id, title) {
 
@@ -148,14 +226,18 @@ export default class CanvasView {
 
             // For deleting
             canvasItem.addEventListener("dblclick", () => {
-                const doDelete = confirm("Are you sure you want to delete this note?")
 
-                if (doDelete) {
-                    this.onCanvasDelete(canvasItem.dataset.canvasId);
-                }
+                // const doDelete = confirm("Are you sure you want to delete this note?")
+
+                // if (doDelete) {
+                //     this.onCanvasDelete(canvasItem.dataset.canvasId);
+                // }
+
+                this.onCanvasDelete(canvasItem.dataset.canvasId);
             });
         }));
         
     }
+    
     
 }

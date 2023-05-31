@@ -103,10 +103,10 @@
 /* ----- side canvas ----- */
 .side__canvas{
     position: absolute;
-    top: 25%;
+    top: 212px;
     left: 5%;
     width: 90%;
-    height: 100px;
+    /* height: 100px; */
     padding: 0;
     border-radius: 5px;
     overflow-y: hidden;
@@ -126,16 +126,27 @@
     background-color: #7f5539;
 }
 
+
+
 .side__canvas-list{
     position: absolute;
+    padding-top: 8px;
     top: 50px;
     left: 5%;
     width: 90%;
-    height: 100px;
     border-radius: 5px;
-
+    overflow-y: hidden;
+    
     background-color: #594B38;
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
+.side__canvas-list::-webkit-scrollbar{
+    display: none;
+}
+
+
 .side__canvas-item{
     margin-left: 5%;
     width: 90%;
@@ -146,16 +157,13 @@
     color: #ede0d4;
     background-color: #3E3629;
 }
-.first-item{
-    margin-top: 5%;
-}
 
 
 
 /* ----- side favourites ----- */
 .side__favourites{
     position: absolute;
-    top: 49%;
+    top: 470px;
     left: 5%;
     width: 90%;
     height: 100px;
@@ -170,7 +178,7 @@
 /* ----- side recents ----- */
 .side__recents{
     position: absolute;
-    top: 65%;
+    top: 600px;
     left: 5%;
     width: 90%;
     height: 100px;
@@ -180,6 +188,25 @@
 
     background-color: #9c6644;
 }
+
+
+
+/* ----- side line break ----- */
+
+.side__line-break{
+    position: absolute;
+    top: 730px;
+    left: 5%;
+    width: 90%;
+    height: 2px;
+    border: none;
+    border-radius: 2px;
+
+    background-color: #ddb892;
+    /* border-top: 2px solid #ddb892; */
+}
+
+
 
 
 
