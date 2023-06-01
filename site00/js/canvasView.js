@@ -94,11 +94,12 @@ export default class CanvasView {
         `
 
 
-        // - Button to add a new note ---
+        // - Button to add a new note ------------------------
         const btnAddCavnas = this.root.querySelector(".canvas__add");
         // - Adjusting the side__canvas based on its scrollHeight.
         const sideCanvas = this.root.querySelector(".side__canvas");
         const sideCanvasList = this.root.querySelector(".side__canvas-list");
+        
 
         btnAddCavnas.addEventListener('click', () => {
             this.onCanvasAdd();
@@ -117,7 +118,7 @@ export default class CanvasView {
                 
                 sideCanvas.style.height = `${sideCanvas.scrollHeight + 15}px`;
             } else {
-                
+
                 sideCanvasList.style.height = "163px";
                 sideCanvas.style.height = `${sideCanvas.scrollHeight + 15}px`;
 
@@ -132,8 +133,25 @@ export default class CanvasView {
             
         });
         
-        
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     // Update Canvas containers height adjustments ------
@@ -183,6 +201,8 @@ export default class CanvasView {
     
     
     
+
+    
     
     
     
@@ -200,31 +220,52 @@ export default class CanvasView {
 
     updateCanvasList(canvas) {
 
-        // - Adding a canvas button inside the canvas-list -------------
+        // - Adding a canvas button inside the canvas-list ------
 
         const canvasListContainer = this.root.querySelector(".side__canvas-list");
 
         // - Empty List
         canvasListContainer.innerHTML = "";
 
-        // - Adding a canvas button inside the canvas-list -------------
+        // - Adding a canvas button inside the canvas-list ------
         for (const canva of canvas) {
             const html = this._createListItemHTML(canva.id, canva.title);
 
             canvasListContainer.insertAdjacentHTML("beforeend", html);
         }
+        
+    }
 
 
 
 
 
 
-        // - SELECT/DELETE events for each item in the list -------------
+
+
+
+
+
+
+
+
+
+
+    // - SELECT/DELETE/DRAGGING events for Items or Cards -------------
+
+    canvasEventListeners() {
+
+        const canvasListContainer = this.root.querySelector(".side__canvas-list");
+        
+        const canvasPreview = this.root.querySelector(".canvas__preview");
+        const canvasCardItem = this.root.querySelector(".canvas__card-item");
+        
+
 
         canvasListContainer.querySelectorAll(".side__canvas-item").forEach((canvasItem => {
 
 
-            // For deleting
+            // For deleting cards ------------
             canvasItem.addEventListener("dblclick", () => {
 
                 // const doDelete = confirm("Are you sure you want to delete this note?")
@@ -236,6 +277,33 @@ export default class CanvasView {
                 this.onCanvasDelete(canvasItem.dataset.canvasId);
             });
         }));
+
+
+
+
+
+
+
+
+        // For draggable cards ----------------
+
+        const _onDrag = (e) => {
+
+            let getCardStyle = window.getComputedStyle(canvasCardItem);
+            let cardLeft = parseInt(getCardStyle.left);
+            let cardTop = parseInt(getCardStyle.top);
+
+            canvasCardItem.style.left = `${cardLeft + e.movementX}px`;
+            canvasCardItem.style.top = `${cardTop + e.movementY}px`;
+            
+        }
+        
+        canvasCardItem.addEventListener("mousedown", () => {
+            canvasCardItem.addEventListener("mousemove", _onDrag);
+        });
+        canvasPreview.addEventListener("mouseup", () => {
+            canvasCardItem.removeEventListener("mousemove", _onDrag);
+        });
         
     }
     

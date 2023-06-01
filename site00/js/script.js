@@ -1,21 +1,20 @@
 import CanvasAPI from "./canvasAPI.js";
 import CanvasView from "./canvasView.js";
+import CardsAPI from "./cardsAPI.js";
 
 
 const main = document.getElementById("app");
-const {getAllCanvas, saveCanvas, deleteCanvas } = CanvasAPI;
+const { getAllCanvas, saveCanvas, deleteCanvas } = CanvasAPI;
+const { getAllCards } = CardsAPI;
 const canvas = getAllCanvas();
+const cards = getAllCards();
 
-
-// CanvasAPI.saveCanvas({
-//     id: 796277,
-//     title: "Something Else I Mean!"
-// })
 
 
 
 
 const view = new CanvasView(main, {
+
     onCanvasAdd() {
 
         const currentCanvasLength = getAllCanvas().length;
@@ -32,6 +31,7 @@ const view = new CanvasView(main, {
         const updatedCanvas = getAllCanvas();
 
         view.updateCanvasList(updatedCanvas);
+        view.canvasEventListeners();
         view.updateCanvasHeigth(updatedCanvas);
     },
     onCanvasDelete(id) {
@@ -44,12 +44,18 @@ const view = new CanvasView(main, {
         const updatedCanvas = getAllCanvas();
         
         view.updateCanvasList(updatedCanvas);
+        view.canvasEventListeners();
         view.updateCanvasHeigth(updatedCanvas);
     },
+
 });
+
+
 
 
 
 // - Adding a new canvas inside the canvas-list -------------
 // - This acts as a refreshener 
 view.updateCanvasList(canvas);
+
+view.canvasEventListeners();

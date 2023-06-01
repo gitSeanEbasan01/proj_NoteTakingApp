@@ -246,7 +246,7 @@
     border-radius: 10px;
     z-index: 2;
     
-    /* background-color: yellow; */
+    overflow: hidden;
     background-color: #ddb892;
 }
 
@@ -265,8 +265,8 @@
 .canvas__card-item{
     position: absolute;
     transform: translate(-50%, -50%);
-    top: 70%;
-    left: 40%;
+    top: 583px;
+    left: 200px;
     width: 200px;
     height: 150px;
     border: 8px solid #7f5539;
