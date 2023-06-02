@@ -157,6 +157,13 @@
     color: #ede0d4;
     background-color: #3E3629;
 }
+.side__canvas-item:hover{
+    background-color: #9c6644;
+}
+.side__canvas-item--selected{
+    color: #3E3629;
+    background-color: #ede0d4;
+}
 
 
 

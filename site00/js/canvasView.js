@@ -2,8 +2,10 @@ import CanvasAPI from "./canvasAPI.js";
 
 export default class CanvasView {
 
-    constructor(root, { onCanvasAdd, onCanvasDelete } = {}) {
+    constructor(root, { onActiveCanvas, onCanvasSelect, onCanvasAdd, onCanvasDelete } = {}) {
         this.root = root;
+        this.onActiveCanvas = onActiveCanvas;
+        this.onCanvasSelect = onCanvasSelect;
         this.onCanvasAdd = onCanvasAdd;
         this.onCanvasDelete = onCanvasDelete;
 
@@ -227,7 +229,7 @@ export default class CanvasView {
         // - Empty List
         canvasListContainer.innerHTML = "";
 
-        // - Adding a canvas button inside the canvas-list ------
+        // - Adding a canvas inside the canvas-list ------
         for (const canva of canvas) {
             const html = this._createListItemHTML(canva.id, canva.title);
 
@@ -262,20 +264,44 @@ export default class CanvasView {
         
 
 
+        // - For Deleting Cards with right mouse button -----
+        let clickCount = 0;
+        let timer;
+        
+
         canvasListContainer.querySelectorAll(".side__canvas-item").forEach((canvasItem => {
 
-
-            // For deleting cards ------------
-            canvasItem.addEventListener("dblclick", () => {
-
-                // const doDelete = confirm("Are you sure you want to delete this note?")
-
-                // if (doDelete) {
-                //     this.onCanvasDelete(canvasItem.dataset.canvasId);
-                // }
-
-                this.onCanvasDelete(canvasItem.dataset.canvasId);
+            canvasItem.addEventListener("click", () => {
+                this.onCanvasSelect(canvasItem.dataset.canvasId);
             });
+
+
+
+
+
+            // For deleting Cards with right mouse button ------
+
+            // canvasItem.addEventListener("dblclick", () => {
+            //     this.onCanvasDelete(canvasItem.dataset.canvasId);
+            // });
+
+            canvasItem.addEventListener("contextmenu", (event) => {
+                event.preventDefault();
+                if (event.button === 2) {
+                    clickCount++;
+
+                    if (clickCount === 1) {
+                        timer = setTimeout(function() {
+                            clickCount = 0;
+                        }, 300);
+                    } else if (clickCount === 2) {
+                        clearTimeout(timer);
+                        clickCount = 0;
+                        this.onCanvasDelete(canvasItem.dataset.canvasId);
+                    }
+                }
+            });
+            
         }));
 
 
@@ -283,9 +309,7 @@ export default class CanvasView {
 
 
 
-
-
-        // For draggable cards ----------------
+        // For draggable cards --------------------------------
 
         const _onDrag = (e) => {
 
@@ -306,6 +330,61 @@ export default class CanvasView {
         });
         
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    saveActiveCanvas(canvasId) {
+
+        const savedCanvas = this.onActiveCanvas(canvasId);
+        
+        // this.onActiveCanvas(canvasId);
+        
+        // return savedCanvas;
+        
+    }
+    
+
+    // - Make the currently selected or added canvas active ------------------------
+    
+    activeCanvas(canvas) {
+
+        const canvasItems = this.root.querySelectorAll(".side__canvas-item")
+
+        canvasItems.forEach((eachItems => {
+            eachItems.classList.remove("side__canvas-item--selected");
+        }));
+
+        this.root.querySelector(`.side__canvas-item[data-canvas-id="${canvas.id}"]`).classList.add("side__canvas-item--selected");
+
+        console.log(canvas.id);
+
+        const savingActiveCanvas = this.saveActiveCanvas(canvas.id);
+
+        
+    }
+
+    // saveActiveCanvas() {
+
+    //     const currentActiveCanvas = this.activeCanvas(canvas);
+
+    //     console.log(currentActiveCanvas.id);
+
+    //     return currentActiveCanvas;
+        
+    // }
+    
     
     
 }
