@@ -134,6 +134,7 @@
     top: 50px;
     left: 5%;
     width: 90%;
+    height: 0;
     border-radius: 5px;
     overflow-y: hidden;
     
@@ -272,7 +273,7 @@
 .canvas__card-item{
     position: absolute;
     transform: translate(-50%, -50%);
-    top: 583px;
+    /* top: 583px; */
     left: 200px;
     width: 200px;
     height: 150px;
