@@ -1,15 +1,16 @@
 import CanvasAPI from "./canvasAPI.js";
-import CanvasPreview from "./canvasPreview.js";
-import CardsAPI from "./cardsAPI.js";
 
 export default class CanvasListView {
 
-    constructor(root, { onActiveCanvas, onCanvasSelect, onCanvasAdd, onCanvasDelete } = {}) {
+    constructor(root, { onActiveCanvas, onCanvasSelect, onCanvasAdd, onCanvasDelete, onCardAdd, onCardDelete } = {}) {
         this.root = root;
         this.onActiveCanvas = onActiveCanvas;
         this.onCanvasSelect = onCanvasSelect;
         this.onCanvasAdd = onCanvasAdd;
         this.onCanvasDelete = onCanvasDelete;
+
+        this.onCardAdd = onCardAdd;
+        this.onCardDelete = onCardDelete;
 
         this.root.innerHTML = `
             <div class="top-bar">
@@ -130,6 +131,24 @@ export default class CanvasListView {
             }
             
         });
+
+
+
+
+
+        // ---------------------------------- CANVAS PREVIEW ----------------------------------
+
+
+
+
+        // - Adding a card in the preview ----------------------------
+
+        const btnAddCard = this.root.querySelector(".card__add");
+
+        btnAddCard.addEventListener('click', () => {
+            this.onCardAdd();
+        });
+        
 
         
     }
@@ -304,11 +323,6 @@ export default class CanvasListView {
 
 
 
-            // - For deleting Cards with right mouse button ------
-
-            // canvasItem.addEventListener("dblclick", () => {
-            //     this.onCanvasDelete(canvasItem.dataset.canvasId);
-            // });
 
             canvasItem.addEventListener("contextmenu", (event) => {
                 event.preventDefault();
@@ -442,12 +456,12 @@ export default class CanvasListView {
 
 
 
+    // - For Adding Cards ------------------------
+
 
     _createCardItemHTML(id, title, body, xPosition, yPosition) {
 
         // - Use later... 'canvas__card-item--selected'
-
-
 
         return`
             <div 
@@ -480,6 +494,41 @@ export default class CanvasListView {
 
             cardHolder.insertAdjacentHTML("beforeend", html);
         };
+        
+    }
+
+
+
+
+
+
+
+    // - For Selecting/Deleting Cards ------------------------
+
+
+    canvasPreviewEventListeners() {
+
+        let rightClickCount = 0;
+        let rightClickTimer;
+        
+        const cardItem = this.root.querySelectorAll(".canvas__card-item");
+
+        cardItem.forEach((canvasCardItem => {
+            canvasCardItem.addEventListener("contextmenu", (event) => {
+                event.preventDefault();
+                rightClickCount++;
+                if (rightClickCount === 1) {
+                    rightClickTimer = setTimeout(function() {
+                        rightClickCount = 0;
+                    }, 300);
+                } else if (rightClickCount === 2) {
+                    rightClickCount = 0;
+                    clearTimeout(rightClickTimer);
+                    this.onCardDelete(canvasCardItem.dataset.cardId);
+                }
+            });
+        }));
+        
         
     }
     

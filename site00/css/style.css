@@ -279,6 +279,7 @@
     height: 150px;
     border: 8px solid #7f5539;
     border-radius: 20px;
+    z-index: 3;
 
     background-color: #b08968;
 }

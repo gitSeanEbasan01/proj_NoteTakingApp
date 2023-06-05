@@ -1,7 +1,6 @@
 import CanvasAPI from "./canvasAPI.js";
 import CanvasListView from "./canvasListView.js";
 import CardsAPI from "./cardsAPI.js";
-import CanvasPreview from "./canvasPreview.js";
 
 
 const main = document.getElementById("app");
@@ -12,6 +11,9 @@ const canvas = getAllCanvas();
 const cards = getAllCards();
 
 let currentActiveCanvas;
+
+
+
 
 
 
@@ -76,44 +78,19 @@ const view = new CanvasListView(main, {
 
     },
 
-});
 
 
 
 
-
-// - Adding a new canvas inside the canvas-list -------------
-// - This acts as a refreshener 
-view.updateCanvasList(canvas);
-// - Adding event listeners at the start -------------
-view.canvasEventListeners();
-// - Current/temporary active canvas -------------
-if (canvas.length > 0) {
-    view.activeCanvas(canvas[0]);
-}
+    // ---------------------------------- CANVAS PREVIEW ----------------------------------
 
 
-
-
-
-
-
-
-
-// ------------------------------------- ADDING CARDS -------------------------------------
-
-
-const canvasPreview = view.root.querySelector(".canvas__preview");
-const getCanvasStyle = window.getComputedStyle(canvasPreview);
-
-
-// - Adding a card in the preview ----------------------------
-const btnAddCard = view.root.querySelector(".card__add");
-
-const preview = new CanvasPreview({
 
     onCardAdd() {
-        
+
+        const canvasPreview = view.root.querySelector(".canvas__preview");
+        const getCanvasStyle = window.getComputedStyle(canvasPreview);
+
         const newCard = {
             canvasId: "",
             id: "",
@@ -131,14 +108,35 @@ const preview = new CanvasPreview({
         const updatedCards = getAllCards();
 
         view.updateCardsList(updatedCards);
+        view.canvasPreviewEventListeners();
         
+    },
+    onCardDelete(id) {
+
+        deleteCards(id);
+
+
+        const updatedCards = getAllCards();
+
+        view.updateCardsList(updatedCards);
+        view.canvasPreviewEventListeners();
     },
 
 });
 
-btnAddCard.addEventListener('click', () => {
-    preview.onCardAdd();
-});
 
-// deleteCards();
+
+
+
+// - Adding a new canvas and cards inside the the lists -------------
+// - This acts as a refreshener 
+view.updateCanvasList(canvas);
 view.updateCardsList(cards);
+// - Adding event listeners at the start -------------
+view.canvasEventListeners();
+view.canvasPreviewEventListeners();
+// - Current/temporary active canvas -------------
+if (canvas.length > 0) {
+    view.activeCanvas(canvas[0]);
+}
+

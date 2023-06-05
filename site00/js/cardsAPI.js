@@ -17,7 +17,7 @@ export default class CardsAPI{
         Steps:
 
         [X] Deal with making an active canvas.
-        [] Make an Add Card functionality (Add and Delete) and make it so that it's saved in the localStorage.
+        [X] Make an Add Card functionality (Add and Delete) and make it so that it's saved in the localStorage.
         [] Create five cards ans two canvases, and assign two cards on one of the canvas and three on the other canvas.
         
     */
@@ -53,12 +53,11 @@ export default class CardsAPI{
     }
 
 
-    static deleteCards() {
-        // - This is temporary..
+    static deleteCards(id) {
 
         const cards = CardsAPI.getAllCards();
 
-        const emptyCards = cards.filter(cards.id);
+        const emptyCards = cards.filter(card => card.id != id);
 
         localStorage.setItem("notesapp-canvas-cards", JSON.stringify(emptyCards));
 
