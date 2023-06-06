@@ -4,7 +4,7 @@ import CardsAPI from "./cardsAPI.js";
 
 
 const main = document.getElementById("app");
-const { getAllCanvas, saveCanvas, deleteCanvas } = CanvasAPI;
+const { getAllCanvas, saveCanvas, deleteCanvas, createCanvasData } = CanvasAPI;
 const { getAllCards, saveCards, deleteCards } = CardsAPI;
 
 const canvas = getAllCanvas();
@@ -45,20 +45,27 @@ const view = new CanvasListView(main, {
 
 
 
+
+
         // - Retrieving the data before updating the canvasList
         const updatedCanvas = getAllCanvas();
 
         view.updateCanvasList(updatedCanvas);
         view.canvasEventListeners();
         view.updateCanvasHeigth(updatedCanvas);
-        // For activating the canvas that you added
+        // - For activating the canvas that you added
         view.activeCanvas(updatedCanvas[0]);
+        // - Creating a canvas data based on the created canvas
+        createCanvasData(currentActiveCanvas);
 
     },
     onCanvasDelete(id) {
 
         // - Deleting 
         deleteCanvas(id);
+
+
+
 
 
         // - Retrieving the data before updating the canvasList

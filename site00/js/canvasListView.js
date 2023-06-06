@@ -382,16 +382,6 @@ export default class CanvasListView {
 
 
 
-
-
-
-    // For saving the id of a canvas -------------------
-
-    saveActiveCanvas(canvas) {
-
-        const savedCanvas = this.onActiveCanvas(canvas);
-        
-    }
     
 
     // - Make the currently selected or added canvas active ------------------------
@@ -408,8 +398,8 @@ export default class CanvasListView {
 
 
 
-        // For saving the id of a canvas
-        const savingActiveCanvas = this.saveActiveCanvas(canvas);
+        // For saving the id of a canvas -------------------
+        const savingActiveCanvas = this.onActiveCanvas(canvas);
 
         
     }

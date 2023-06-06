@@ -18,7 +18,12 @@ export default class CardsAPI{
 
         [X] Deal with making an active canvas.
         [X] Make an Add Card functionality (Add and Delete) and make it so that it's saved in the localStorage.
-        [] Create five cards ans two canvases, and assign two cards on one of the canvas and three on the other canvas.
+        [] Assign cards to different canvases.
+            [X] When you add a canvas, create another data in the localStorage named "notesapp-canvas-`canvasId`". Deleting the canvas will remove that data as well.
+            [] When you add a card in a canvas, make a way to assign that created card to the current active canvas and save it. Which includes all the properties of the cards.
+            [] Make it so that when you switch to a different canvas, the saved cards inside that canvas will appear. And then disappear when you switch to another.
+        [] Editing the cards
+            [] ...
         
     */
 

@@ -39,15 +39,33 @@ export default class CanvasAPI{
 
             // - Create an id using a floor() function.
             canvasToSave.id = Math.floor(Math.random() * 1000000);
+            // - Checking if there's another id with the same number. If there is, then loop and generate another number.
+            const findCanvasId = canvas.find(canva => canva.id == canvasToSave.id);
+            let canvasIdExist = null;
+            if (findCanvasId) {
+                canvasIdExist = true;
+            } else {
+                canvasIdExist = false;
+            }
+            while (canvasIdExist) {
+                canvasToSave.id = Math.floor(Math.random() * 1000000);
+
+                const scanCanvasId = canvas.find(canva => canva.id == canvasToSave.id);
+                if (scanCanvasId) {
+                    canvasIdExist = true;
+                } else {
+                    canvasIdExist = false;
+                }
+            }
             // - Instance a Date() object and convert it to a readable string using the toISOString() method;
             canvasToSave.updated = new Date().toISOString();
-    
+
+
             // - Add the new canvasToSave element to the end of the canvas array using the push() method.
             canvas.push(canvasToSave);
-
         }
         
-
+        
         // - localStorage.setItem() is a method that allows us to store data.
         // - JSON.stringify() is a function that converts an object into a JSON string.
         // - JSON - JavaScript Object Notation - is a format that represents a data structure.
@@ -55,14 +73,54 @@ export default class CanvasAPI{
     }
     
 
-    // - Deleting a canvas -------------
+    // - Deleting a canvas --------------------------
     static deleteCanvas(id) {
+
         const canvas = CanvasAPI.getAllCanvas();
         // Filter or show each canvas on the list that is not (!=) in the passed id
         const newCanvas = canvas.filter(canva => canva.id != id);
 
         localStorage.setItem("notesapp-canvas", JSON.stringify(newCanvas));
+
+
+
+        
+        // - Deleting the Canvas Data with the canvas Id ----------
+        const keys = Object.keys(localStorage);
+
+        for (let i = 0; i < keys.length; i++) {
+            const key = keys[i];
+
+            if (key.includes(`${id}`)) {
+                localStorage.removeItem(key);
+                break;
+            }
+        }
+
+        
     }
 
+    
+    
+
+
+
+    // - Creating a Data for the canvas that is created -------------------------
+
+    static createCanvasData(addedCanvas) {
+
+        const canvas = CanvasAPI.getAllCanvas();
+        const findCanvas = canvas.find(canva => canva.id == addedCanvas.id);
+        
+        const generateCanvasKey = function() {
+            return 'notes-app-canvas-' + findCanvas.id + '_' + Math.random().toString(36).substring(2, 9);
+        };
+
+
+
+        const newData = [];
+        localStorage.setItem(generateCanvasKey(), JSON.stringify(newData))
+
+    }
     
 }
