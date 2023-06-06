@@ -20,8 +20,14 @@ export default class CardsAPI{
         [X] Make an Add Card functionality (Add and Delete) and make it so that it's saved in the localStorage.
         [] Assign cards to different canvases.
             [X] When you add a canvas, create another data in the localStorage named "notesapp-canvas-`canvasId`". Deleting the canvas will remove that data as well.
-            [] When you add a card in a canvas, make a way to assign that created card to the current active canvas and save it. Which includes all the properties of the cards.
-            [] Make it so that when you switch to a different canvas, the saved cards inside that canvas will appear. And then disappear when you switch to another.
+            [X] When you add a card in a canvas, make a way to assign that created card to the current active canvas and save it. Which includes all the properties of the cards.
+            [X] Make it so that when you switch to a different canvas, the saved cards inside that canvas will appear. And then disappear when you switch to another.
+            [] Problem: When there's only one canvas left with cards inside and you delete the canvas, the leftover cards will stay and will not disappear. The only way for
+                them to disappear is to either delete the cards by double clicking on them or to restart the site.
+                [] With only one canvas left, make it so that when the canvas is finally empty, the rest of the cards will disappear.
+            [] Problem: When there is no canvas and you click the add card button, it will give you an error.
+                [] Make it so that when you have no canvas, you're not able to click to the add card button.
+        [] Adding Main Canvas Feature for default or go to view.
         [] Editing the cards
             [] ...
         
@@ -68,4 +74,86 @@ export default class CardsAPI{
 
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    static getActiveCanvasData(activeCanvas) {
+
+        const keys = Object.keys(localStorage);
+
+        for(let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+
+            if (key.includes(activeCanvas.id)) {
+                const canvasData = JSON.parse(localStorage.getItem(key) || "[]");
+                return canvasData;
+                break;
+            }
+        }
+        
+    }
+
+    static saveCardToCanvas(cardsToSave, activeCanvas) {
+
+        const cardInCanvas = CardsAPI.getActiveCanvasData(activeCanvas);
+
+        cardsToSave.id = Math.floor(Math.random() * 1000000);
+        cardsToSave.updated = new Date().toISOString();
+        cardInCanvas.push(cardsToSave);
+
+        const keys = Object.keys(localStorage);
+        let keyName;
+        
+        for(let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+
+            if (key.includes(activeCanvas.id)) {
+                keyName = key
+                break;
+            }
+        }
+
+        localStorage.setItem(keyName, JSON.stringify(cardInCanvas));
+        
+    }
+
+
+    static deleteCardInCanvas(id, activeCanvas) {
+
+        const cardInCanvas = CardsAPI.getActiveCanvasData(activeCanvas);
+
+        const removeCard = cardInCanvas.filter(card => card.id != id);
+
+
+        const keys = Object.keys(localStorage);
+        let keyName;
+        
+        for(let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+
+            if (key.includes(activeCanvas.id)) {
+                keyName = key
+                break;
+            }
+        }
+
+        localStorage.setItem(keyName, JSON.stringify(removeCard));
+
+
+    }
+    
 }
