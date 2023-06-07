@@ -5,11 +5,12 @@ import CardsAPI from "./cardsAPI.js";
 
 const main = document.getElementById("app");
 const { getAllCanvas, saveCanvas, deleteCanvas, createCanvasData } = CanvasAPI;
-const { getAllCards, saveCards, deleteCards, getActiveCanvasData, saveCardToCanvas, deleteCardInCanvas } = CardsAPI;
+const { getAllCards, saveCards, deleteCards, getActiveCanvasData, saveCardToCanvas, deleteCardInCanvas, saveActiveCard } = CardsAPI;
 
 const canvas = getAllCanvas();
 
 let currentActiveCanvas;
+let currentActiveCard;
 
 
 
@@ -120,11 +121,31 @@ const view = new CanvasListView(main, {
 
 
 
+    onActiveCard(card) {
+
+        currentActiveCard = card;
+        
+    },
+    onCardSelect(cardId) {
+        
+        const updatedCards = getActiveCanvasData(currentActiveCanvas);
+        const selectedCard = updatedCards.find(card => card.id == cardId);
+
+        view.activeCard(selectedCard);
+
+
+
+        // - Save Active Card to localStorage
+
+        // saveActiveCard(currentActiveCanvas, selectedCard);
+        
+        
+    },
     onCardAdd() {
 
         const getCanvas = getAllCanvas();
 
-        if (getCanvas.length > 0) {
+        if (getCanvas.length > 0 && currentActiveCanvas != undefined) {
             const canvasPreview = view.root.querySelector(".canvas__preview");
             const getCanvasStyle = window.getComputedStyle(canvasPreview);
     
@@ -147,21 +168,33 @@ const view = new CanvasListView(main, {
     
             view.updateCardsList(updatedCards);
             view.canvasPreviewEventListeners();
+            if (currentActiveCard != undefined) {
+                view.activeCard(currentActiveCard)
+            }
         }
 
         
     },
     onCardDelete(id) {
-
+        
         // deleteCards(id);
         deleteCardInCanvas(id, currentActiveCanvas);
-
-
+        
+        
         // const updatedCards = getAllCards();
         const updatedCards = getActiveCanvasData(currentActiveCanvas);
-
+        
         view.updateCardsList(updatedCards);
         view.canvasPreviewEventListeners();
+
+        if (currentActiveCard != undefined) { 
+            if (id === `${currentActiveCard.id}`) {
+                currentActiveCard = undefined;
+            } else {
+                view.activeCard(currentActiveCard);
+            }
+        }
+
     },
 
 });
@@ -178,8 +211,9 @@ const view = new CanvasListView(main, {
 // - This acts as a refreshener 
 view.updateCanvasList(canvas);
 // - Current/temporary active canvas -------------
-if (canvas.length > 0) {
-    view.activeCanvas(canvas[0]);
+if (canvas.length > 0 && currentActiveCanvas != undefined) {
+    // view.activeCanvas(canvas[0]);
+    view.activeCanvas(currentActiveCanvas);
     view.updateCardsList(getActiveCanvasData(currentActiveCanvas));
 
     // - Adding event listeners at the start -------------
@@ -188,6 +222,8 @@ if (canvas.length > 0) {
 
 // - Adding event listeners at the start -------------
 view.canvasEventListeners();
+
+// console.log(currentActiveCard);
 
 
 
@@ -200,8 +236,8 @@ view.canvasEventListeners();
 
 // ----------------------------------- DELETE CANVAS DATA WHEN YOU EXIT THE BROWSER (TEMPORARY) -----------------------------------
 
-window.onbeforeunload = function() {
+// window.onbeforeunload = function() {
 
-    localStorage.clear();
+//     localStorage.clear();
     
-}
+// }

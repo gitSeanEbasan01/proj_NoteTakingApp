@@ -28,9 +28,18 @@ export default class CardsAPI{
             [X] Problem: When there is no canvas and you click the add card button, it will give you an error.
                 [X] Make it so that when you have no canvas, you're not able to click to the add card button.
             [X] Temporary thing: when you exit the website, delete some datas in the localStorage.
+        [] Saving Active card so that when you change canvas and go back, the last active card is still active.
         [] Adding Main Canvas Feature for default or go to view.
         [] Editing the cards
-            [] ...
+            [] Select card
+            [] Change text and save it
+            [] Change position and save it
+
+        ...
+        [] Movement of card holder
+            [] Panning
+            [] Zooming
+        [] Options for canvas and cards (renaming, deleting, etc.)
         
     */
 
@@ -75,6 +84,7 @@ export default class CardsAPI{
 
 
     }
+
 
 
 
@@ -156,5 +166,43 @@ export default class CardsAPI{
 
 
     }
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Save active card inside localStorage
+
+    static saveActiveCard(activeCanvas, activeCard) {
+
+        const keys = Object.keys(localStorage)
+        let currentActCanvasKeyName;
+
+        for(let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+
+            if (key.includes(activeCanvas.id)) {
+                console.log(key);
+                currentActCanvasKeyName = key;
+                break;
+            }
+        }
+
+        
+
+        localStorage.setItem(`${"cardSave-"+currentActCanvasKeyName}`, JSON.stringify(activeCard.id))
+        
+    }
+    
+    
     
 }

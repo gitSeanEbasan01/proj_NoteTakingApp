@@ -2,13 +2,15 @@ import CanvasAPI from "./canvasAPI.js";
 
 export default class CanvasListView {
 
-    constructor(root, { onActiveCanvas, onCanvasSelect, onCanvasAdd, onCanvasDelete, onCardAdd, onCardDelete } = {}) {
+    constructor(root, { onActiveCanvas, onCanvasSelect, onCanvasAdd, onCanvasDelete, onActiveCard, onCardSelect, onCardAdd, onCardDelete } = {}) {
         this.root = root;
         this.onActiveCanvas = onActiveCanvas;
         this.onCanvasSelect = onCanvasSelect;
         this.onCanvasAdd = onCanvasAdd;
         this.onCanvasDelete = onCanvasDelete;
 
+        this.onActiveCard = onActiveCard;
+        this.onCardSelect = onCardSelect;
         this.onCardAdd = onCardAdd;
         this.onCardDelete = onCardDelete;
 
@@ -383,7 +385,7 @@ export default class CanvasListView {
     
     activeCanvas(canvas) {
 
-        const canvasItems = this.root.querySelectorAll(".side__canvas-item")
+        const canvasItems = this.root.querySelectorAll(".side__canvas-item");
 
         canvasItems.forEach((eachItems => {
             eachItems.classList.remove("side__canvas-item--selected");
@@ -493,6 +495,12 @@ export default class CanvasListView {
 
 
 
+
+
+
+
+
+
     // - For Selecting/Deleting Cards ------------------------
 
 
@@ -502,9 +510,17 @@ export default class CanvasListView {
         let rightClickTimer;
         
         const cardItem = this.root.querySelectorAll(".canvas__card-item");
-        // const btnAddCard = this.root.querySelector(".card__add");
 
         cardItem.forEach((canvasCardItem => {
+
+            // - For Selecting Card and making it active -------
+            
+            canvasCardItem.addEventListener('click', () => {
+                this.onCardSelect(canvasCardItem.dataset.cardId);
+            });
+
+
+            // - For Deleting a Card -------
             canvasCardItem.addEventListener("contextmenu", (event) => {
                 event.preventDefault();
                 rightClickCount++;
@@ -520,14 +536,37 @@ export default class CanvasListView {
             });
         }));
 
-
-        // btnAddCard.addEventListener('click', () => {
-        //     this.onCardAdd();
-        // });
         
         
     }
+
+
     
+
+
+
+
+
+
+    // - Make the currently selected or added card active ------------------------
+    
+    activeCard(card) {
+
+        const cardItems = this.root.querySelectorAll(".canvas__card-item");
+
+        cardItems.forEach((eachItems => {
+            eachItems.classList.remove("canvas__card-item--selected");
+        }));
+
+        this.root.querySelector(`.canvas__card-item[data-card-id="${card.id}"]`).classList.add("canvas__card-item--selected");
+
+
+        
+        // For saving the id of a canvas -------------------
+        const savingActiveCard = this.onActiveCard(card);
+
+        
+    }
     
     
 }
