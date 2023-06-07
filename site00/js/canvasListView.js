@@ -136,19 +136,14 @@ export default class CanvasListView {
 
 
 
-        // ---------------------------------- CANVAS PREVIEW ----------------------------------
-
-
-
-
-        // - Adding a card in the preview ----------------------------
+        
 
         const btnAddCard = this.root.querySelector(".card__add");
+
 
         btnAddCard.addEventListener('click', () => {
             this.onCardAdd();
         });
-        
 
         
     }
@@ -446,6 +441,11 @@ export default class CanvasListView {
 
 
 
+
+
+
+
+
     // - For Adding Cards ------------------------
 
 
@@ -502,6 +502,7 @@ export default class CanvasListView {
         let rightClickTimer;
         
         const cardItem = this.root.querySelectorAll(".canvas__card-item");
+        // const btnAddCard = this.root.querySelector(".card__add");
 
         cardItem.forEach((canvasCardItem => {
             canvasCardItem.addEventListener("contextmenu", (event) => {
@@ -518,6 +519,11 @@ export default class CanvasListView {
                 }
             });
         }));
+
+
+        // btnAddCard.addEventListener('click', () => {
+        //     this.onCardAdd();
+        // });
         
         
     }

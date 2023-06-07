@@ -8,7 +8,6 @@ const { getAllCanvas, saveCanvas, deleteCanvas, createCanvasData } = CanvasAPI;
 const { getAllCards, saveCards, deleteCards, getActiveCanvasData, saveCardToCanvas, deleteCardInCanvas } = CardsAPI;
 
 const canvas = getAllCanvas();
-const cards = getAllCards();
 
 let currentActiveCanvas;
 
@@ -93,19 +92,22 @@ const view = new CanvasListView(main, {
         view.updateCanvasList(updatedCanvas);
         view.canvasEventListeners();
         view.updateCanvasHeigth(updatedCanvas);
-        // For activating a canvas when you delete something
+        // - For activating a canvas when you delete something
+        // - Note that length has already been decreased since at the top already deleted something
         if (currentActiveCanvas.id != id) {
             view.activeCanvas(currentActiveCanvas);
-        } else {
-            if (updatedCanvas.length > 0) {
-                view.activeCanvas(updatedCanvas[0]);
+        } else if (updatedCanvas.length > 0) {
+
+            view.activeCanvas(updatedCanvas[0]);
 
 
 
-
-                view.updateCardsList(getActiveCanvasData(currentActiveCanvas));
-                view.canvasPreviewEventListeners();
-            }
+            view.updateCardsList(getActiveCanvasData(currentActiveCanvas));
+            view.canvasPreviewEventListeners();
+            console.log("canvas more than 0")
+            
+        } else if (updatedCanvas.length == 0) {
+            view.updateCardsList(CardsAPI.getAllCards());
         }
 
     },
@@ -120,28 +122,33 @@ const view = new CanvasListView(main, {
 
     onCardAdd() {
 
-        const canvasPreview = view.root.querySelector(".canvas__preview");
-        const getCanvasStyle = window.getComputedStyle(canvasPreview);
+        const getCanvas = getAllCanvas();
 
-        const newCard = {
-            canvasId: "",
-            id: "",
-            title: "Title of Card",
-            body: "Body of Card",
-            updated: "",
-            positionX: `${Math.floor(Math.random() * parseInt(getCanvasStyle.width))}px`,
-            positionY: `${Math.floor(Math.random() * parseInt(getCanvasStyle.height))}px`
-        };
-        saveCardToCanvas(newCard, currentActiveCanvas);
-        
+        if (getCanvas.length > 0) {
+            const canvasPreview = view.root.querySelector(".canvas__preview");
+            const getCanvasStyle = window.getComputedStyle(canvasPreview);
+    
+            const newCard = {
+                canvasId: "",
+                id: "",
+                title: "Title of Card",
+                body: "Body of Card",
+                updated: "",
+                positionX: `${Math.floor(Math.random() * parseInt(getCanvasStyle.width))}px`,
+                positionY: `${Math.floor(Math.random() * parseInt(getCanvasStyle.height))}px`
+            };
+            saveCardToCanvas(newCard, currentActiveCanvas);
+            
+    
+    
+    
+    
+            const updatedCards = getActiveCanvasData(currentActiveCanvas);
+    
+            view.updateCardsList(updatedCards);
+            view.canvasPreviewEventListeners();
+        }
 
-
-
-
-        const updatedCards = getActiveCanvasData(currentActiveCanvas);
-
-        view.updateCardsList(updatedCards);
-        view.canvasPreviewEventListeners();
         
     },
     onCardDelete(id) {
@@ -173,12 +180,28 @@ view.updateCanvasList(canvas);
 // - Current/temporary active canvas -------------
 if (canvas.length > 0) {
     view.activeCanvas(canvas[0]);
-}
-view.updateCardsList(getActiveCanvasData(currentActiveCanvas));
+    view.updateCardsList(getActiveCanvasData(currentActiveCanvas));
 
+    // - Adding event listeners at the start -------------
+    view.canvasPreviewEventListeners();
+}
 
 // - Adding event listeners at the start -------------
 view.canvasEventListeners();
-view.canvasPreviewEventListeners();
 
 
+
+
+
+
+
+
+
+
+// ----------------------------------- DELETE CANVAS DATA WHEN YOU EXIT THE BROWSER (TEMPORARY) -----------------------------------
+
+window.onbeforeunload = function() {
+
+    localStorage.clear();
+    
+}

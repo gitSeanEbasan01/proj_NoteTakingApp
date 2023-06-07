@@ -22,11 +22,12 @@ export default class CardsAPI{
             [X] When you add a canvas, create another data in the localStorage named "notesapp-canvas-`canvasId`". Deleting the canvas will remove that data as well.
             [X] When you add a card in a canvas, make a way to assign that created card to the current active canvas and save it. Which includes all the properties of the cards.
             [X] Make it so that when you switch to a different canvas, the saved cards inside that canvas will appear. And then disappear when you switch to another.
-            [] Problem: When there's only one canvas left with cards inside and you delete the canvas, the leftover cards will stay and will not disappear. The only way for
+            [X] Problem: When there's only one canvas left with cards inside and you delete the canvas, the leftover cards will stay and will not disappear. The only way for
                 them to disappear is to either delete the cards by double clicking on them or to restart the site.
-                [] With only one canvas left, make it so that when the canvas is finally empty, the rest of the cards will disappear.
-            [] Problem: When there is no canvas and you click the add card button, it will give you an error.
-                [] Make it so that when you have no canvas, you're not able to click to the add card button.
+                [X] With only one canvas left, make it so that when the canvas is finally empty, the rest of the cards will disappear.
+            [X] Problem: When there is no canvas and you click the add card button, it will give you an error.
+                [X] Make it so that when you have no canvas, you're not able to click to the add card button.
+            [X] Temporary thing: when you exit the website, delete some datas in the localStorage.
         [] Adding Main Canvas Feature for default or go to view.
         [] Editing the cards
             [] ...
