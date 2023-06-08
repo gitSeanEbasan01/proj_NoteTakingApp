@@ -253,8 +253,8 @@ view.canvasEventListeners();
 
 // ----------------------------------- DELETE CANVAS DATA WHEN YOU EXIT THE BROWSER (TEMPORARY) -----------------------------------
 
-window.onbeforeunload = function() {
+// window.onbeforeunload = function() {
 
-    localStorage.clear();
+//     localStorage.clear();
     
-}
+// }

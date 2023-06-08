@@ -1,4 +1,5 @@
 import CanvasAPI from "./canvasAPI.js";
+import CardsAPI from "./cardsAPI.js";
 
 export default class CanvasListView {
 
@@ -14,6 +15,9 @@ export default class CanvasListView {
         this.onCardDeselect = onCardDeselect;
         this.onCardAdd = onCardAdd;
         this.onCardDelete = onCardDelete;
+
+        this.cardDragged = false;
+        this.savedActiveCanvas;
 
         this.root.innerHTML = `
             <div class="top-bar">
@@ -167,33 +171,74 @@ export default class CanvasListView {
         });
 
 
-        const _onDrag = (e) => {
-            console.log(e.clientX, e.clientY);
-            // let getCardStyle = window.getComputedStyle(canvasCardItem);
-            // let cardLeft = parseInt(getCardStyle.left);
-            // let cardTop = parseInt(getCardStyle.top);
 
-            // canvasCardItem.style.left = `${cardLeft + e.movementX}px`;
-            // canvasCardItem.style.top = `${cardTop + e.movementY}px`;
+
+        // - For Dragging a Card --------------------------------------
+        
+        const cardPreview = this.root.querySelector(".canvas__card-preview");
+        let clickedCard;
+        // let isDragging = false;
+
+
+        const _onDrag = (e) => {
+            // console.log(e.movementX, e.movementY);
+            let getCardStyle = window.getComputedStyle(clickedCard);
+            let cardLeft = parseInt(getCardStyle.left);
+            let cardTop = parseInt(getCardStyle.top);
+            
+            clickedCard.style.left = `${cardLeft + e.movementX}px`;
+            clickedCard.style.top = `${cardTop + e.movementY}px`;
+            
+            if (e.movementX > 0 || e.movementY > 0 || e.movementX < 0 || e.movementY < 0){
+                this.cardDragged = true;
+            }
             
         }
-        
 
-        const cardItem = this.root.querySelectorAll(".canvas__card-item");
         
         cardHolder.addEventListener("mousedown", (event) => {
 
-            const clickedElement = event.target;
-            const clickedElement00 = event.target.parentElement;
-            // const isCardItem = clickedElement.closest('.canvas__card-item');
+            const clickedElement = event.target.parentElement;
+            // console.log(clickedElement);
+            // console.log(this.savedActiveCanvas);
             
-            if (clickedElement00.classList.value == "canvas__card-item") {
+            if (clickedElement.classList.value === "canvas__card-item" || clickedElement.classList.value === "canvas__card-item canvas__card-item--selected") {
                 cardHolder.addEventListener("mousemove", _onDrag)
+                clickedCard = clickedElement;
+                cardPreview.style.pointerEvents = "none";
             }
 
         });
-        canvasPreview.addEventListener("mouseup", () => {
+        canvasPreview.addEventListener("mouseup", (event) => {
+
+            const clickedElement = event.target.parentElement;
+            
             cardHolder.removeEventListener("mousemove", _onDrag)
+            cardPreview.style.pointerEvents = "all";
+            if (this.cardDragged) {
+
+                const activeCanvas = CardsAPI.getActiveCanvasData(this.savedActiveCanvas)
+                const findCard = activeCanvas.find(card => card.id == clickedElement.dataset.cardId)
+                const findActiveCard = activeCanvas.find(card => card.selected == true);
+                
+                if (findCard.selected == true) {
+                    findCard.selected = true;
+                    console.log("Card is active");
+                }else {
+                    // findCard.selected = false;
+                    // console.log("Card is not active");
+                    // console.log(findActiveCard);
+                    if (findActiveCard) {
+                        this.onCardSelect(findActiveCard.id);
+                    }else {
+                        this.onCardDeselect();
+                    }
+
+                    // this.onCardSelect();
+                }
+                
+                this.cardDragged = false;
+            }
         });
 
         
@@ -420,6 +465,7 @@ export default class CanvasListView {
 
         // For saving the id of a canvas -------------------
         const savingActiveCanvas = this.onActiveCanvas(canvas);
+        this.savedActiveCanvas = canvas;
 
         
     }
@@ -553,7 +599,6 @@ export default class CanvasListView {
         let rightClickTimer;
         
         const cardItem = this.root.querySelectorAll(".canvas__card-item");
-        const cardHolder = this.root.querySelector(".canvas__card-holder");
 
         cardItem.forEach((canvasCardItem => {
 
