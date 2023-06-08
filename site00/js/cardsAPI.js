@@ -126,9 +126,11 @@ export default class CardsAPI{
         cardsToSave.updated = new Date().toISOString();
         cardInCanvas.push(cardsToSave);
 
+
+
         const keys = Object.keys(localStorage);
         let keyName;
-        
+
         for(let i = 0; i < keys.length; i++) {
             let key = keys[i];
 
@@ -141,6 +143,68 @@ export default class CardsAPI{
         localStorage.setItem(keyName, JSON.stringify(cardInCanvas));
         
     }
+
+    static saveActiveCard(cardsToSave, activeCanvas) {
+
+        const cardInCanvas = CardsAPI.getActiveCanvasData(activeCanvas);
+        const selectedCardInCanvas = cardInCanvas.find(card => card.id == cardsToSave.id)
+        const existingCardInCanvas = cardInCanvas.filter(card => card.id != cardsToSave.id)
+
+
+        if (selectedCardInCanvas) {
+            selectedCardInCanvas.selected = cardsToSave.selected;
+        }
+
+        existingCardInCanvas.forEach((existing => {
+            existing.selected = false;
+        }));
+
+
+
+        
+
+        const keys = Object.keys(localStorage);
+        let keyName;
+
+        for(let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+
+            if (key.includes(activeCanvas.id)) {
+                keyName = key
+                break;
+            }
+        }
+
+        localStorage.setItem(keyName, JSON.stringify(cardInCanvas));
+        
+    }
+
+    static saveInactiveCard(cardsToDeactivate, activeCanvas) {
+
+        const cardsInCanvas = CardsAPI.getActiveCanvasData(activeCanvas);
+
+        cardsInCanvas.forEach((cards => {
+            cards.selected = cardsToDeactivate.selected;
+        }));
+
+
+
+        const keys = Object.keys(localStorage);
+        let keyName;
+
+        for(let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+
+            if (key.includes(activeCanvas.id)) {
+                keyName = key
+                break;
+            }
+        }
+
+        localStorage.setItem(keyName, JSON.stringify(cardsInCanvas));
+        
+    }
+    
 
 
     static deleteCardInCanvas(id, activeCanvas) {
@@ -165,42 +229,6 @@ export default class CardsAPI{
         localStorage.setItem(keyName, JSON.stringify(removeCard));
 
 
-    }
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // Save active card inside localStorage
-
-    static saveActiveCard(activeCanvas, activeCard) {
-
-        const keys = Object.keys(localStorage)
-        let currentActCanvasKeyName;
-
-        for(let i = 0; i < keys.length; i++) {
-            let key = keys[i];
-
-            if (key.includes(activeCanvas.id)) {
-                console.log(key);
-                currentActCanvasKeyName = key;
-                break;
-            }
-        }
-
-        
-
-        localStorage.setItem(`${"cardSave-"+currentActCanvasKeyName}`, JSON.stringify(activeCard.id))
-        
     }
     
     

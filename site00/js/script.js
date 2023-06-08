@@ -5,7 +5,7 @@ import CardsAPI from "./cardsAPI.js";
 
 const main = document.getElementById("app");
 const { getAllCanvas, saveCanvas, deleteCanvas, createCanvasData } = CanvasAPI;
-const { getAllCards, saveCards, deleteCards, getActiveCanvasData, saveCardToCanvas, deleteCardInCanvas, saveActiveCard } = CardsAPI;
+const { getAllCards, saveCards, deleteCards, getActiveCanvasData, saveCardToCanvas, deleteCardInCanvas, saveActiveCard, saveInactiveCard } = CardsAPI;
 
 const canvas = getAllCanvas();
 
@@ -42,6 +42,8 @@ const view = new CanvasListView(main, {
 
         view.updateCardsList(getActiveCanvasData(currentActiveCanvas));
         view.canvasPreviewEventListeners();
+
+        currentActiveCard = undefined;
 
     },
     onCanvasAdd() {
@@ -105,10 +107,11 @@ const view = new CanvasListView(main, {
 
             view.updateCardsList(getActiveCanvasData(currentActiveCanvas));
             view.canvasPreviewEventListeners();
-            console.log("canvas more than 0")
+            currentActiveCard = undefined;
             
         } else if (updatedCanvas.length == 0) {
             view.updateCardsList(CardsAPI.getAllCards());
+            currentActiveCard = undefined;
         }
 
     },
@@ -131,14 +134,41 @@ const view = new CanvasListView(main, {
         const updatedCards = getActiveCanvasData(currentActiveCanvas);
         const selectedCard = updatedCards.find(card => card.id == cardId);
 
-        view.activeCard(selectedCard);
 
 
 
-        // - Save Active Card to localStorage
 
-        // saveActiveCard(currentActiveCanvas, selectedCard);
+        // - Save Active Card to localStorage ---------------------
+
+        const activateCard = {
+            id: selectedCard.id,
+            selected: true
+        };
+        saveActiveCard(activateCard, currentActiveCanvas);
+
+
+        const newUpdatedCards = getActiveCanvasData(currentActiveCanvas);
+
+        view.updateCardsList(newUpdatedCards);
+        view.canvasPreviewEventListeners();
         
+        
+    },
+    onCardDeselect() {
+
+        if (currentActiveCanvas != undefined) {
+
+            const deactivateCard = {
+                selected: false
+            };
+            saveInactiveCard(deactivateCard, currentActiveCanvas);
+    
+            const newUpdatedCards = getActiveCanvasData(currentActiveCanvas);
+    
+            view.updateCardsList(newUpdatedCards);
+            view.canvasPreviewEventListeners();
+
+        }
         
     },
     onCardAdd() {
@@ -150,8 +180,8 @@ const view = new CanvasListView(main, {
             const getCanvasStyle = window.getComputedStyle(canvasPreview);
     
             const newCard = {
-                canvasId: "",
                 id: "",
+                selected: false,
                 title: "Title of Card",
                 body: "Body of Card",
                 updated: "",
@@ -168,9 +198,6 @@ const view = new CanvasListView(main, {
     
             view.updateCardsList(updatedCards);
             view.canvasPreviewEventListeners();
-            if (currentActiveCard != undefined) {
-                view.activeCard(currentActiveCard)
-            }
         }
 
         
@@ -186,14 +213,6 @@ const view = new CanvasListView(main, {
         
         view.updateCardsList(updatedCards);
         view.canvasPreviewEventListeners();
-
-        if (currentActiveCard != undefined) { 
-            if (id === `${currentActiveCard.id}`) {
-                currentActiveCard = undefined;
-            } else {
-                view.activeCard(currentActiveCard);
-            }
-        }
 
     },
 
@@ -223,8 +242,6 @@ if (canvas.length > 0 && currentActiveCanvas != undefined) {
 // - Adding event listeners at the start -------------
 view.canvasEventListeners();
 
-// console.log(currentActiveCard);
-
 
 
 
@@ -236,8 +253,8 @@ view.canvasEventListeners();
 
 // ----------------------------------- DELETE CANVAS DATA WHEN YOU EXIT THE BROWSER (TEMPORARY) -----------------------------------
 
-// window.onbeforeunload = function() {
+window.onbeforeunload = function() {
 
-//     localStorage.clear();
+    localStorage.clear();
     
-// }
+}
