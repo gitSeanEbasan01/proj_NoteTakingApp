@@ -253,7 +253,6 @@
     width: calc(100% - 215px);
     height: calc(100% - 55px);
     border-radius: 10px;
-    /* z-index: 4; */
     
     overflow: hidden;
     background-color: #ddb892;
@@ -280,11 +279,11 @@
     height: 150px;
     border: 8px solid #7f5539;
     border-radius: 20px;
-    /* z-index: 3; */
 
     /* transition: border .1s ease-in-out, background-color .05s ease-in-out; */
     background-color: #b08968;
     cursor: pointer;
+    
 }
 .card__border-highlight{
     position: inherit;
@@ -313,6 +312,8 @@
     position: inherit;
     transform: translate(-50%, -50%);
     left: 50%;
+
+    pointer-events: none;
 }
 .card__small-title{
     top: 10%;
@@ -326,6 +327,7 @@
     left: 5%;
 
     font-size: 13px;
+    pointer-events: none;
 }
 
 

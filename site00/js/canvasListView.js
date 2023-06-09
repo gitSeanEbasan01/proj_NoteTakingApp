@@ -99,6 +99,24 @@ export default class CanvasListView {
         `
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         // - Button to add a new note ------------------------
         const btnAddCavnas = this.root.querySelector(".canvas__add");
         // - Adjusting the side__canvas based on its scrollHeight.
@@ -109,10 +127,9 @@ export default class CanvasListView {
             this.onCanvasAdd();
         });
 
-        
 
 
-        // - Adjusting the side__canvas based on its scrollHeight.  ----------
+        // - Adjusting the side__canvas based on its scrollHeight.  ---------------------------------
         window.addEventListener('DOMContentLoaded', () => {
 
             const canvas = CanvasAPI.getAllCanvas();
@@ -143,6 +160,14 @@ export default class CanvasListView {
 
 
 
+
+
+
+
+
+
+
+
         
 
         const btnAddCard = this.root.querySelector(".card__add");
@@ -152,36 +177,49 @@ export default class CanvasListView {
         
 
 
-        // - For Adding a Card ------------
+        // - For Adding a Card -----------------------------------------------
         btnAddCard.addEventListener('click', () => {
             this.onCardAdd();
         });
         
 
-        // - For Deselecting a card -----------
+        // - For Deselecting a card ----------------------------------------------
         cardHolder.addEventListener('click', (event) => {
 
             const clickedElement = event.target;
             const isCardItem = clickedElement.closest('.canvas__card-item');
+            const getCanvas = CanvasAPI.getAllCanvas();
 
-            if (!isCardItem) {
-                this.onCardDeselect();
-            } 
+            if (getCanvas.length != 0) {
+                if (!isCardItem) {
+                    this.onCardDeselect();
+                } 
+            }
 
         });
 
 
 
 
-        // - For Dragging a Card --------------------------------------
+
+
+
+
+        
+
+
+
+
+
+
+
+        // - For Dragging a Card -------------------------------------------------------------
         
         const cardPreview = this.root.querySelector(".canvas__card-preview");
         let clickedCard;
-        // let isDragging = false;
 
 
         const _onDrag = (e) => {
-            // console.log(e.movementX, e.movementY);
             let getCardStyle = window.getComputedStyle(clickedCard);
             let cardLeft = parseInt(getCardStyle.left);
             let cardTop = parseInt(getCardStyle.top);
@@ -192,55 +230,84 @@ export default class CanvasListView {
             if (e.movementX > 0 || e.movementY > 0 || e.movementX < 0 || e.movementY < 0){
                 this.cardDragged = true;
             }
+
+            return clickedCard;
             
         }
-
+        
         
         cardHolder.addEventListener("mousedown", (event) => {
-
+            
             const clickedElement = event.target.parentElement;
-            // console.log(clickedElement);
-            // console.log(this.savedActiveCanvas);
             
             if (clickedElement.classList.value === "canvas__card-item" || clickedElement.classList.value === "canvas__card-item canvas__card-item--selected") {
+                // - For changing z-index ---------
+                const getRestOfCards = this.root.querySelectorAll(".canvas__card-item");
+                getRestOfCards.forEach((card => {
+                    if (card.dataset.cardId != clickedElement.dataset.cardId){
+                        card.style.zIndex = 0;
+                    } else {
+                        card.style.cursor = "grab"
+                        card.style.zIndex = 1;
+                    }
+                }));
+                
                 cardHolder.addEventListener("mousemove", _onDrag)
                 clickedCard = clickedElement;
                 cardPreview.style.pointerEvents = "none";
+                btnAddCard.style.pointerEvents = "none";
             }
 
         });
         canvasPreview.addEventListener("mouseup", (event) => {
 
             const clickedElement = event.target.parentElement;
-            
-            cardHolder.removeEventListener("mousemove", _onDrag)
-            cardPreview.style.pointerEvents = "all";
-            if (this.cardDragged) {
+            let savedCardLeft;
+            let savedCardTop;
 
+            
+            if (this.cardDragged) {
+                
+                const dragged = true;
+                savedCardLeft = _onDrag(event).style.left;
+                savedCardTop = _onDrag(event).style.top;
+                
+                
+                // - Saving card's latest position ----------------------
+                
                 const activeCanvas = CardsAPI.getActiveCanvasData(this.savedActiveCanvas)
                 const findCard = activeCanvas.find(card => card.id == clickedElement.dataset.cardId)
                 const findActiveCard = activeCanvas.find(card => card.selected == true);
                 
+                CardsAPI.saveCardPosition(findCard, savedCardLeft, savedCardTop, this.savedActiveCanvas)
+                const updatedCards = CardsAPI.getActiveCanvasData(this.savedActiveCanvas)
+                this.updateCardsList(updatedCards);
+
+
                 if (findCard.selected == true) {
-                    findCard.selected = true;
-                    console.log("Card is active");
+                    // - If the card you're dragging is active, keep it active.
+                    // - The dragged parameter is for z-index.
+                    this.onCardSelect(findCard.id, dragged)
                 }else {
-                    // findCard.selected = false;
-                    // console.log("Card is not active");
-                    // console.log(findActiveCard);
+                    // - If the card you're dragging is not active, either there is no active card or active card is different, keep it that way.
                     if (findActiveCard) {
-                        this.onCardSelect(findActiveCard.id);
+                        this.onCardSelect(findActiveCard.id, dragged);
                     }else {
                         this.onCardDeselect();
                     }
-
-                    // this.onCardSelect();
                 }
                 
                 this.cardDragged = false;
-            }
-        });
 
+            }
+
+
+            cardHolder.removeEventListener("mousemove", _onDrag)
+            cardPreview.style.pointerEvents = "all";
+            btnAddCard.style.pointerEvents = "all";
+
+        });
+        
         
     }
 
@@ -284,7 +351,7 @@ export default class CanvasListView {
 
 
 
-    // Update Canvas containers height adjustments ------
+    // Update Canvas containers height adjustments -----------------------------------------------
 
     updateCanvasHeigth(canvas) {
 
@@ -343,7 +410,7 @@ export default class CanvasListView {
     
 
 
-    // - Adding a canvas inside the canvas-list -------------
+    // - Adding a canvas inside the canvas-list ----------------------------------------------
 
     _createListItemHTML(id, title) {
 
@@ -388,17 +455,15 @@ export default class CanvasListView {
 
 
 
-    // - SELECT/DELETE/DRAGGING events for Items or Cards -------------
+    // - SELECT/DELETEevents for Items or Cards --------------------------------------------------
 
     canvasEventListeners() {
 
         const canvasListContainer = this.root.querySelector(".side__canvas-list");
         
-        const canvasPreview = this.root.querySelector(".canvas__preview");
-        
 
 
-        // - For Deleting Cards with right mouse button -----
+        // - For Deleting Canvases with right mouse button ----------------------------
         let clickCount = 0;
         let timer;
         
@@ -449,7 +514,7 @@ export default class CanvasListView {
 
     
 
-    // - Make the currently selected or added canvas active ------------------------
+    // - Make the currently selected or added canvas active --------------------------------------
     
     activeCanvas(canvas) {
 
@@ -517,12 +582,10 @@ export default class CanvasListView {
 
 
 
-    // - For Adding Cards ------------------------
+    // - For Adding Cards ----------------------------------------------------------------------
 
 
     _createCardItemHTML(id, selected, title, body, xPosition, yPosition) {
-
-        // - Use later... 'canvas__card-item--selected'
 
         if (selected === true) {
             return`
@@ -573,7 +636,7 @@ export default class CanvasListView {
         for (const card of cards) {
             const html = this._createCardItemHTML(card.id, card.selected, card.title, card.body, card.positionX, card.positionY);
 
-            cardHolder.insertAdjacentHTML("beforeend", html);
+            cardHolder.insertAdjacentHTML("afterbegin", html);
         };
         
     }
@@ -590,7 +653,7 @@ export default class CanvasListView {
 
 
 
-    // - For Selecting/Deleting Cards ------------------------
+    // - For Selecting/Deleting/Deleting Cards -----------------------------------------------
 
 
     canvasPreviewEventListeners() {
@@ -605,11 +668,12 @@ export default class CanvasListView {
             // - For Selecting Card and making it active -------
             
             canvasCardItem.addEventListener('click', () => {
-                this.onCardSelect(canvasCardItem.dataset.cardId);
+                const dragged = false;
+                this.onCardSelect(canvasCardItem.dataset.cardId, dragged);
             });
 
 
-            // - For Deleting a Card -------
+            // - For Deleting a Card ------------------------------
             canvasCardItem.addEventListener("contextmenu", (event) => {
                 event.preventDefault();
                 rightClickCount++;

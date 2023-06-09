@@ -3,18 +3,7 @@ export default class CardsAPI{
 
     /* 
 
-        Properties for Card
-
-        canvasId: (Id of certain canvas),
-        id: (its own id - make a function that scans other ids so that you don't make a duplicate)
-        positionX: ""
-        positionY: ""
-        title: ""
-        body: ""
-        updated: 
-
-
-        Steps:
+        Plans:
 
         [X] Deal with making an active canvas.
         [X] Make an Add Card functionality (Add and Delete) and make it so that it's saved in the localStorage.
@@ -28,14 +17,24 @@ export default class CardsAPI{
             [X] Problem: When there is no canvas and you click the add card button, it will give you an error.
                 [X] Make it so that when you have no canvas, you're not able to click to the add card button.
             [X] Temporary thing: when you exit the website, delete some datas in the localStorage.
-        [] Saving Active card so that when you change canvas and go back, the last active card is still active.
-        [] Adding Main Canvas Feature for default or go to view.
+        [X] Saving Active card so that when you change canvas and go back, the last active card is still active.
         [] Editing the cards
-            [] Select card
-            [] Change text and save it
-            [] Change position and save it
-
-        ...
+            [X] Select card
+            [X] Change position and save it
+            [X] When card is moving, change the cursor to drag.
+            [X] When you drag or select a card, it will be placed on top of other cards to know which is the focus.
+        [] Card Preview Edit
+            [] Change text, save, and display on card.
+            [] Make it draggable
+            [] Make it resizable
+            [] when you double click on the edge, it increases size and can be dragged but cannot be resized.
+            [] ...Plan on what to make for the card preview.
+            [] ...Look up how text linking works.
+        [] Change Adding card
+            [] When double clicking on canvas preview, add a card with the mouse position as the position of the added card.
+            [] When clicking on the add card button, instead of creating a card in a random position, make an indicator follow the mouse pointer and when clicked again, it creates a card in mouse position.
+        [] Adding Main Canvas Feature for default or go to view.
+        [] Canvas list animation.
         [] Movement of card holder
             [] Panning
             [] Zooming
@@ -111,20 +110,28 @@ export default class CardsAPI{
 
             if (key.includes(activeCanvas.id)) {
                 const canvasData = JSON.parse(localStorage.getItem(key) || "[]");
-                return canvasData;
+                return canvasData.sort((a, b) => {
+                    return new Date(a.updated) > new Date(b.updated) ? -1 : 1;
+                });
                 break;
             }
         }
         
     }
-
     static saveCardToCanvas(cardsToSave, activeCanvas) {
 
         const cardInCanvas = CardsAPI.getActiveCanvasData(activeCanvas);
+        const existing = cardInCanvas.find(card => card.id == cardsToSave.id);
 
-        cardsToSave.id = Math.floor(Math.random() * 1000000);
-        cardsToSave.updated = new Date().toISOString();
-        cardInCanvas.push(cardsToSave);
+        if (existing) {
+            existing.title = cardsToSave.title;
+            existing.body = cardsToSave.body;
+            existing.updated = new Date().toISOString();
+        }else {
+            cardsToSave.id = Math.floor(Math.random() * 1000000);
+            cardsToSave.updated = new Date().toISOString();
+            cardInCanvas.push(cardsToSave);
+        }
 
 
 
@@ -144,14 +151,28 @@ export default class CardsAPI{
         
     }
 
-    static saveActiveCard(cardsToSave, activeCanvas) {
+
+
+
+
+
+
+
+
+
+
+
+    static saveActiveCard(cardsToSave, activeCanvas, dragged) {
 
         const cardInCanvas = CardsAPI.getActiveCanvasData(activeCanvas);
         const selectedCardInCanvas = cardInCanvas.find(card => card.id == cardsToSave.id)
         const existingCardInCanvas = cardInCanvas.filter(card => card.id != cardsToSave.id)
 
 
-        if (selectedCardInCanvas) {
+        if (selectedCardInCanvas && dragged == false) {
+            selectedCardInCanvas.selected = cardsToSave.selected;
+            selectedCardInCanvas.updated = new Date().toISOString();
+        } else if (selectedCardInCanvas && dragged == true) {
             selectedCardInCanvas.selected = cardsToSave.selected;
         }
 
@@ -161,7 +182,7 @@ export default class CardsAPI{
 
 
 
-        
+
 
         const keys = Object.keys(localStorage);
         let keyName;
@@ -178,6 +199,17 @@ export default class CardsAPI{
         localStorage.setItem(keyName, JSON.stringify(cardInCanvas));
         
     }
+
+
+
+
+
+
+
+
+
+    
+
 
     static saveInactiveCard(cardsToDeactivate, activeCanvas) {
 
@@ -204,7 +236,55 @@ export default class CardsAPI{
         localStorage.setItem(keyName, JSON.stringify(cardsInCanvas));
         
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    static saveCardPosition(cardToChangePosition, xPosition, yPosition, activeCanvas) {
+
+        const cardsInCanvas = CardsAPI.getActiveCanvasData(activeCanvas);
+        const findCard = cardsInCanvas.find(card => card.id == cardToChangePosition.id)
+
+        if (findCard) {
+            findCard.positionX = xPosition;
+            findCard.positionY = yPosition;
+            findCard.updated = new Date().toISOString();
+        }
+        
+        
+        const keys = Object.keys(localStorage);
+        let keyName;
+
+        for(let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+
+            if (key.includes(activeCanvas.id)) {
+                keyName = key
+                break;
+            }
+        }
+
+        localStorage.setItem(keyName, JSON.stringify(cardsInCanvas));
+
+    }
     
+
+
+
+
+
+
+
+
+
 
 
     static deleteCardInCanvas(id, activeCanvas) {

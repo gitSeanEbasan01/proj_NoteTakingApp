@@ -5,7 +5,7 @@ import CardsAPI from "./cardsAPI.js";
 
 const main = document.getElementById("app");
 const { getAllCanvas, saveCanvas, deleteCanvas, createCanvasData } = CanvasAPI;
-const { getAllCards, saveCards, deleteCards, getActiveCanvasData, saveCardToCanvas, deleteCardInCanvas, saveActiveCard, saveInactiveCard } = CardsAPI;
+const { getAllCards, getActiveCanvasData, saveCardToCanvas, deleteCardInCanvas, saveActiveCard, saveInactiveCard } = CardsAPI;
 
 const canvas = getAllCanvas();
 
@@ -129,12 +129,10 @@ const view = new CanvasListView(main, {
         currentActiveCard = card;
         
     },
-    onCardSelect(cardId) {
+    onCardSelect(cardId, dragged) {
         
         const updatedCards = getActiveCanvasData(currentActiveCanvas);
         const selectedCard = updatedCards.find(card => card.id == cardId);
-
-
 
 
 
@@ -144,7 +142,7 @@ const view = new CanvasListView(main, {
             id: selectedCard.id,
             selected: true
         };
-        saveActiveCard(activateCard, currentActiveCanvas);
+        saveActiveCard(activateCard, currentActiveCanvas, dragged);
 
 
         const newUpdatedCards = getActiveCanvasData(currentActiveCanvas);
