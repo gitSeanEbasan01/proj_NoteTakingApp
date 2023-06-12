@@ -43,6 +43,17 @@ const view = new CanvasListView(main, {
         view.updateCardsList(getActiveCanvasData(currentActiveCanvas));
         view.canvasPreviewEventListeners();
 
+
+        // - For updating if a card preview should appear. -----------------
+        const getCards = getActiveCanvasData(currentActiveCanvas)
+        const findActiveCard = getCards.find(card => card.selected == true)
+        if (findActiveCard) {
+            view.updateCardPreview(findActiveCard);
+            view.cardPreviewEventListeners();
+        } else {
+            view.updateCardPreview(undefined);
+        }
+
         currentActiveCard = undefined;
 
     },
@@ -213,6 +224,34 @@ const view = new CanvasListView(main, {
         view.canvasPreviewEventListeners();
 
     },
+    onCardView(id) {
+
+        const getCardInCanvas = getActiveCanvasData(currentActiveCanvas);
+        const findCard = getCardInCanvas.find(card => card.id == id);
+        
+        view.updateCardPreview(findCard);
+        view.canvasPreviewEventListeners();
+        view.cardPreviewEventListeners();
+        
+    },
+    onCardEdit(id, title, body) {
+
+
+        const editedCard = {
+            id: id,
+            title: title,
+            body: body
+        };
+        saveCardToCanvas(editedCard, currentActiveCanvas);
+
+
+
+        const updatedCards = getActiveCanvasData(currentActiveCanvas);
+
+        view.updateCardsList(updatedCards);
+        view.canvasPreviewEventListeners();
+        
+    },
 
 });
 
@@ -251,8 +290,8 @@ view.canvasEventListeners();
 
 // ----------------------------------- DELETE CANVAS DATA WHEN YOU EXIT THE BROWSER (TEMPORARY) -----------------------------------
 
-// window.onbeforeunload = function() {
+window.onbeforeunload = function() {
 
-//     localStorage.clear();
+    localStorage.clear();
     
-// }
+}

@@ -3,7 +3,7 @@ import CardsAPI from "./cardsAPI.js";
 
 export default class CanvasListView {
 
-    constructor(root, { onActiveCanvas, onCanvasSelect, onCanvasAdd, onCanvasDelete, onActiveCard, onCardSelect, onCardDeselect, onCardAdd, onCardDelete } = {}) {
+    constructor(root, { onActiveCanvas, onCanvasSelect, onCanvasAdd, onCanvasDelete, onActiveCard, onCardSelect, onCardDeselect, onCardAdd, onCardDelete, onCardView, onCardEdit } = {}) {
         this.root = root;
         this.onActiveCanvas = onActiveCanvas;
         this.onCanvasSelect = onCanvasSelect;
@@ -15,6 +15,8 @@ export default class CanvasListView {
         this.onCardDeselect = onCardDeselect;
         this.onCardAdd = onCardAdd;
         this.onCardDelete = onCardDelete;
+        this.onCardView = onCardView;
+        this.onCardEdit = onCardEdit;
 
         this.cardDragged = false;
         this.savedActiveCanvas;
@@ -85,15 +87,12 @@ export default class CanvasListView {
                 
                 <div class="canvas__card-holder">
 
-
                 </div>
 
-                <div class="canvas__card-preview">
-                    <div class="card__border-highlight"></div>
-                    
-                    <input class="card__title" type="text" placeholder="Premade Title Will Be Here">
-                    <textarea class="card__body">Type here or something.</textarea>
+                <div class="card__preview-holder">
+                
                 </div>
+
                 
             </div>
         `
@@ -223,12 +222,17 @@ export default class CanvasListView {
             let getCardStyle = window.getComputedStyle(clickedCard);
             let cardLeft = parseInt(getCardStyle.left);
             let cardTop = parseInt(getCardStyle.top);
+            let cardCursor = getCardStyle.cursor;
+            cardCursor = "pointer";
             
             clickedCard.style.left = `${cardLeft + e.movementX}px`;
             clickedCard.style.top = `${cardTop + e.movementY}px`;
             
+            
             if (e.movementX > 0 || e.movementY > 0 || e.movementX < 0 || e.movementY < 0){
                 this.cardDragged = true;
+                cardCursor = "grab";
+                clickedCard.style.cursor = cardCursor;
             }
 
             return clickedCard;
@@ -247,14 +251,13 @@ export default class CanvasListView {
                     if (card.dataset.cardId != clickedElement.dataset.cardId){
                         card.style.zIndex = 0;
                     } else {
-                        card.style.cursor = "grab"
                         card.style.zIndex = 1;
                     }
                 }));
-                
+
                 cardHolder.addEventListener("mousemove", _onDrag)
                 clickedCard = clickedElement;
-                cardPreview.style.pointerEvents = "none";
+                // cardPreview.style.pointerEvents = "none";
                 btnAddCard.style.pointerEvents = "none";
             }
 
@@ -298,12 +301,12 @@ export default class CanvasListView {
                 }
                 
                 this.cardDragged = false;
-
+                
             }
-
-
+            
+            
             cardHolder.removeEventListener("mousemove", _onDrag)
-            cardPreview.style.pointerEvents = "all";
+            // cardPreview.style.pointerEvents = "all";
             btnAddCard.style.pointerEvents = "all";
 
         });
@@ -644,6 +647,39 @@ export default class CanvasListView {
 
 
 
+    // - For opening a card. ---------------------------------------------------------
+
+    _createCardPreview(cardId, title, body) {
+
+        return`
+            <div
+                class="canvas__card-preview"
+                data-cardpreview-id="${cardId}"
+            >
+                <div class="card__border-highlight"></div>
+                
+                <input class="card__title" type="text" placeholder="Title of Card" value="${title}">
+                <textarea class="card__body">${body}</textarea>
+            </div>
+        `
+        
+    }
+
+
+    updateCardPreview(card) {
+        
+        const canvasCardPreviewHolder = this.root.querySelector(".card__preview-holder");
+
+        if (card == undefined) {
+            canvasCardPreviewHolder.innerHTML = "";
+        } else {
+            canvasCardPreviewHolder.innerHTML = "";
+            const html = this._createCardPreview(card.id, card.title, card.body);
+            canvasCardPreviewHolder.insertAdjacentHTML("afterbegin", html);
+        }
+
+        
+    }
 
 
 
@@ -653,7 +689,18 @@ export default class CanvasListView {
 
 
 
-    // - For Selecting/Deleting/Deleting Cards -----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+    // - For Selecting/Deleting Cards -----------------------------------------------
 
 
     canvasPreviewEventListeners() {
@@ -665,11 +712,15 @@ export default class CanvasListView {
 
         cardItem.forEach((canvasCardItem => {
 
-            // - For Selecting Card and making it active -------
-            
+            // - For Selecting Card and making it active ------------
+            // - Opening card ------------
             canvasCardItem.addEventListener('click', () => {
                 const dragged = false;
                 this.onCardSelect(canvasCardItem.dataset.cardId, dragged);
+            });
+            canvasCardItem.addEventListener('dblclick', () => {
+                // console.log("left double clicked");
+                this.onCardView(canvasCardItem.dataset.cardId);
             });
 
 
@@ -693,10 +744,64 @@ export default class CanvasListView {
         
         
     }
+
+
+    // - For Editing/Deleting Card Previews -----------------------------------------------
+
+    cardPreviewEventListeners() {
+
+        const canvasCardPreview = this.root.querySelectorAll(".canvas__card-preview");
+        let rightClickCount = 0;
+        let rightClickTimer;
+
+        canvasCardPreview.forEach(cardPreview => {
+            const cardTitleInput = cardPreview.querySelector(".card__title");
+            const cardBodyInput = cardPreview.querySelector(".card__body");
+
+            [cardTitleInput, cardBodyInput].forEach(inputField => {
+                inputField.addEventListener("blur", () => {
+                    const updatedCardTitle = cardTitleInput.value.trim();
+                    const updatedCardBody = cardBodyInput.value.trim();
+    
+                    this.onCardEdit(cardPreview.dataset.cardpreviewId, updatedCardTitle, updatedCardBody);
+                    console.log("Entered Value");
+                });
+            });
+            // - For deleting a card preview -------------------------
+            cardPreview.addEventListener("contextmenu", (event) => {
+                event.preventDefault();
+                rightClickCount++;
+                if (rightClickCount === 1) {
+                    rightClickTimer = setTimeout(function() {
+                        rightClickCount = 0;
+                    }, 300);
+                } else if (rightClickCount === 2) {
+                    rightClickCount = 0;
+                    clearTimeout(rightClickTimer);
+                    // this.onCardDelete(canvasCardItem.dataset.cardId);
+                    // console.log("Delete Should work here");
+                    this.onCardDeselect();
+                    this.updateCardPreview(undefined);
+                }
+            });
+
+        });
+
+        
+    }
     
 
 
+
+
     
+
+
+
+
+
+
+
 
 
 
@@ -722,6 +827,33 @@ export default class CanvasListView {
 
         
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     
     
 }

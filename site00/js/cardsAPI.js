@@ -18,13 +18,15 @@ export default class CardsAPI{
                 [X] Make it so that when you have no canvas, you're not able to click to the add card button.
             [X] Temporary thing: when you exit the website, delete some datas in the localStorage.
         [X] Saving Active card so that when you change canvas and go back, the last active card is still active.
-        [] Editing the cards
+        [X] Editing the cards
             [X] Select card
             [X] Change position and save it
             [X] When card is moving, change the cursor to drag.
             [X] When you drag or select a card, it will be placed on top of other cards to know which is the focus.
         [] Card Preview Edit
-            [] Change text, save, and display on card.
+            [X] Open preview.
+            [] Fix the text format of the card (CSS)
+            [] Change text, save, and display on card
             [] Make it draggable
             [] Make it resizable
             [] when you double click on the edge, it increases size and can be dragged but cannot be resized.
