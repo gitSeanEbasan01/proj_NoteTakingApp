@@ -20,6 +20,7 @@ export default class CanvasListView {
 
         this.cardDragged = false;
         this.savedActiveCanvas;
+        this.savedOpenCardPreview;
 
         this.root.innerHTML = `
             <div class="top-bar">
@@ -257,7 +258,6 @@ export default class CanvasListView {
 
                 cardHolder.addEventListener("mousemove", _onDrag)
                 clickedCard = clickedElement;
-                // cardPreview.style.pointerEvents = "none";
                 btnAddCard.style.pointerEvents = "none";
             }
 
@@ -306,7 +306,6 @@ export default class CanvasListView {
             
             
             cardHolder.removeEventListener("mousemove", _onDrag)
-            // cardPreview.style.pointerEvents = "all";
             btnAddCard.style.pointerEvents = "all";
 
         });
@@ -588,7 +587,10 @@ export default class CanvasListView {
     // - For Adding Cards ----------------------------------------------------------------------
 
 
-    _createCardItemHTML(id, selected, title, body, xPosition, yPosition) {
+    _createCardItemHTML(id, selected, title, body, xPosition, yPosition, updated) {
+
+        const MAX_TITLE_LENGTH = 30;
+        const MAX_BODY_LENGTH = 40;
 
         if (selected === true) {
             return`
@@ -602,9 +604,16 @@ export default class CanvasListView {
                 >
                     <div class="card__border-highlight"></div>
                     
-                    <div class="card__small-title">${title}</div>
-                    <div class="card__small-body">${body}</div>
-                    <div class="card__small-updated">Thursday 8:45pm</div>
+                    <div class="card__small-title">${title.substring(0, MAX_TITLE_LENGTH)}${title.length > MAX_TITLE_LENGTH ? "..." : ""}</div>
+                    <div class="card__small-body">${body.substring(0, MAX_BODY_LENGTH)}${body.length > MAX_BODY_LENGTH ? "..." : ""}</div>
+                    <div class="card__small-updated">${updated.toLocaleString(undefined, { 
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                        hour: "numeric",
+                        minute: "numeric",
+                        hour12: true
+                    })}</div>
                 </div>
             `
         } else {
@@ -619,9 +628,16 @@ export default class CanvasListView {
                 >
                     <div class="card__border-highlight"></div>
                     
-                    <div class="card__small-title">${title}</div>
-                    <div class="card__small-body">${body}</div>
-                    <div class="card__small-updated">Thursday 8:45pm</div>
+                    <div class="card__small-title">${title.substring(0, MAX_TITLE_LENGTH)}${title.length > MAX_TITLE_LENGTH ? "..." : ""}</div>
+                    <div class="card__small-body">${body.substring(0, MAX_BODY_LENGTH)}${body.length > MAX_BODY_LENGTH ? "..." : ""}</div>
+                    <div class="card__small-updated">${updated.toLocaleString(undefined, { 
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                        hour: "numeric",
+                        minute: "numeric",
+                        hour12: true
+                    })}</div>
                 </div>
             `
         }
@@ -637,7 +653,7 @@ export default class CanvasListView {
         cardHolder.innerHTML = "";
 
         for (const card of cards) {
-            const html = this._createCardItemHTML(card.id, card.selected, card.title, card.body, card.positionX, card.positionY);
+            const html = this._createCardItemHTML(card.id, card.selected, card.title, card.body, card.positionX, card.positionY, new Date(card.updated));
 
             cardHolder.insertAdjacentHTML("afterbegin", html);
         };
@@ -672,12 +688,13 @@ export default class CanvasListView {
 
         if (card == undefined) {
             canvasCardPreviewHolder.innerHTML = "";
+            this.savedOpenCardPreview = undefined;
         } else {
             canvasCardPreviewHolder.innerHTML = "";
             const html = this._createCardPreview(card.id, card.title, card.body);
             canvasCardPreviewHolder.insertAdjacentHTML("afterbegin", html);
+            this.savedOpenCardPreview = card;
         }
-
         
     }
 
@@ -719,7 +736,6 @@ export default class CanvasListView {
                 this.onCardSelect(canvasCardItem.dataset.cardId, dragged);
             });
             canvasCardItem.addEventListener('dblclick', () => {
-                // console.log("left double clicked");
                 this.onCardView(canvasCardItem.dataset.cardId);
             });
 
@@ -735,6 +751,16 @@ export default class CanvasListView {
                 } else if (rightClickCount === 2) {
                     rightClickCount = 0;
                     clearTimeout(rightClickTimer);
+                    
+                    const getCardInCanvas = CardsAPI.getActiveCanvasData(this.savedActiveCanvas);
+                    const findCard = getCardInCanvas.find(card => card.id == Number(canvasCardItem.dataset.cardId));
+                    
+                    if (this.savedOpenCardPreview != undefined) {
+                        if (this.savedOpenCardPreview.id == Number(canvasCardItem.dataset.cardId)) {
+                            this.updateCardPreview(undefined);
+                        }
+                    }
+
                     this.onCardDelete(canvasCardItem.dataset.cardId);
                 }
             });
@@ -764,7 +790,6 @@ export default class CanvasListView {
                     const updatedCardBody = cardBodyInput.value.trim();
     
                     this.onCardEdit(cardPreview.dataset.cardpreviewId, updatedCardTitle, updatedCardBody);
-                    console.log("Entered Value");
                 });
             });
             // - For deleting a card preview -------------------------
@@ -778,8 +803,6 @@ export default class CanvasListView {
                 } else if (rightClickCount === 2) {
                     rightClickCount = 0;
                     clearTimeout(rightClickTimer);
-                    // this.onCardDelete(canvasCardItem.dataset.cardId);
-                    // console.log("Delete Should work here");
                     this.onCardDeselect();
                     this.updateCardPreview(undefined);
                 }

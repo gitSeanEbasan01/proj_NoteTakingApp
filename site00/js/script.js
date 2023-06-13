@@ -295,3 +295,8 @@ window.onbeforeunload = function() {
     localStorage.clear();
     
 }
+// window.onload = function() {
+
+//     localStorage.clear();
+    
+// }

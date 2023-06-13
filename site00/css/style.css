@@ -310,16 +310,24 @@
 .card__small-title, 
 .card__small-body{
     position: inherit;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, 0);
     left: 50%;
-
+    width: 80%;
+    
     pointer-events: none;
+    text-align: center;
 }
 .card__small-title{
-    top: 10%;
+    top: 7%;
+    height: 45px;
+    font-size: 18px;
+    font-weight: 700;
+    overflow-y: hidden;
 }
 .card__small-body{
-    top: 50%;
+    top: 47%;
+    height: 38px;
+    overflow-y: hidden;
 }
 .card__small-updated{
     position: inherit;
@@ -360,26 +368,29 @@
     transform: translate(-50%, 0);
 }
 .card__title{
-    top: 2%;
+    top: 4%;
     left: 50%;
+    border-radius: 5px;
 
     text-align: center;
     font-size: 1.2em;
     font-weight: bold;
 
     color: #000;
-    /* background-color: #b08968; */
+    background-color: #ede0d4;
 }
 .card__body{
     top: 15%;
     left: 50%;
-    height: 30px;
+    height: 300px;
+    border-radius: 10px;
     
     text-align: center;
     font-size: 1.2em;
     line-height: 1.5;
     resize: none;
-    overflow-y: hidden;
+    /* overflow-y: hidden; */
 
-    /* background-color: #b08968; */
+    color: #ede0d4;
+    background-color: #9c6644;
 }

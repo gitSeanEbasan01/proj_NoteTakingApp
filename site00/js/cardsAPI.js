@@ -26,6 +26,7 @@ export default class CardsAPI{
         [] Card Preview Edit
             [X] Open preview.
             [] Fix the text format of the card (CSS)
+            [] Disable pointer events of card preview when hovering a card
             [] Change text, save, and display on card
             [] Make it draggable
             [] Make it resizable
