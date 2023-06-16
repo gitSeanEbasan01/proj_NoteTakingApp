@@ -235,6 +235,16 @@ export default class CanvasListView {
                 cardCursor = "grab";
                 clickedCard.style.cursor = cardCursor;
             }
+            // - For disabling the pointer events of the card preview when hovering a card.
+            if (this.savedOpenCardPreview){
+                const getCardPreview = this.root.querySelectorAll(".canvas__card-preview");
+                getCardPreview.forEach((cardPreview) => {
+                    let getPreviewStyle = window.getComputedStyle(cardPreview);
+                    let previewPointerEvents = getPreviewStyle.pointerEvents;
+                    previewPointerEvents = "none";
+                    cardPreview.style.pointerEvents = previewPointerEvents;
+                })
+            }
 
             return clickedCard;
             
@@ -307,6 +317,16 @@ export default class CanvasListView {
             
             cardHolder.removeEventListener("mousemove", _onDrag)
             btnAddCard.style.pointerEvents = "all";
+            // - For disabling the pointer events of the card preview when hovering a card.
+            if (this.savedOpenCardPreview){
+                const getCardPreview = this.root.querySelectorAll(".canvas__card-preview");
+                getCardPreview.forEach((cardPreview) => {
+                    let getPreviewStyle = window.getComputedStyle(cardPreview);
+                    let previewPointerEvents = getPreviewStyle.pointerEvents;
+                    previewPointerEvents = "All";
+                    cardPreview.style.pointerEvents = previewPointerEvents;
+                })
+            }
 
         });
         
@@ -667,6 +687,46 @@ export default class CanvasListView {
 
     _createCardPreview(cardId, title, body) {
 
+        // const regex = /(\+[^\s]+)\s*/g;
+        // const replacedBody = body.replace(regex, '<button class="card__body-button" contenteditable="false">$1</button> ');
+
+        // const html = `
+        //     <div class="canvas__card-preview" data-cardpreview-id="${cardId}">
+        //         <div class="card__border-highlight"></div>
+        //         <input class="card__title" type="text" placeholder="Title of Card" value="${title}">
+        //         <div class="card__body" contenteditable="true">${replacedBody}</div>
+        //     </div>`;
+
+        // return html;
+        
+        // let html = `
+        //     <div
+        //         class="canvas__card-preview"
+        //         data-cardpreview-id="${cardId}"
+        //     >
+        //         <div class="card__border-highlight"></div>
+                
+        //         <input class="card__title" type="text" placeholder="Title of Card" value="${title}">
+        //         <div class="card__body" contenteditable="true">`;
+
+
+        // let lastIndex = 0;
+        // let match;
+        // while ((match = regex.exec(body)) !== null) {
+        //     const buttonIndex = match.index;
+        //     const beforeText = body.substring(lastIndex, buttonIndex);
+        //     const buttonText = 'button'; // The specific text you want to replace the word with
+        //     const afterText = body.substring(buttonIndex + match[0].length);
+        //     html += `${beforeText} <button>button</button> `;
+        //     lastIndex = buttonIndex + match[0].length;
+        // }
+
+        // const remainingText = body.substring(lastIndex);
+        // html += `${remainingText}</div></div>`;
+
+        // return html;
+        
+
         return`
             <div
                 class="canvas__card-preview"
@@ -675,7 +735,7 @@ export default class CanvasListView {
                 <div class="card__border-highlight"></div>
                 
                 <input class="card__title" type="text" placeholder="Title of Card" value="${title}">
-                <textarea class="card__body">${body}</textarea>
+                <div class="card__body" contenteditable="true">${body}</div>
             </div>
         `
         
@@ -785,11 +845,57 @@ export default class CanvasListView {
             const cardBodyInput = cardPreview.querySelector(".card__body");
 
             [cardTitleInput, cardBodyInput].forEach(inputField => {
+                // cardBodyInput.focus();
+                // let range = document.createRange();
+                // let selection = window.getSelection();
+                // range.selectNodeContents(cardBodyInput);
+                // range.collapse(false);
+                // selection.removeAllRanges();
+                // selection.addRange(range);
+                
                 inputField.addEventListener("blur", () => {
                     const updatedCardTitle = cardTitleInput.value.trim();
-                    const updatedCardBody = cardBodyInput.value.trim();
+                    const updatedCardBody = cardBodyInput.innerText;
     
                     this.onCardEdit(cardPreview.dataset.cardpreviewId, updatedCardTitle, updatedCardBody);
+                    this.onCardView(cardPreview.dataset.cardpreviewId)
+                });
+                inputField.addEventListener("keydown", (event) => {
+                    // const updatedCardTitle = cardTitleInput.value.trim();
+                    // const updatedCardBody = cardBodyInput.innerText;
+                    // this.onCardEdit(cardPreview.dataset.cardpreviewId, updatedCardTitle, updatedCardBody);
+                    
+                    if (event.ctrlKey || event.metaKey){
+                        if (event.ctrlKey && event.key === "Enter") {
+                            const updatedCardTitle = cardTitleInput.value.trim();
+                            const updatedCardBody = cardBodyInput.innerText;
+                            this.onCardEdit(cardPreview.dataset.cardpreviewId, updatedCardTitle, updatedCardBody);
+                            this.onCardView(cardPreview.dataset.cardpreviewId)
+                        } else if (event.metaKey && event.key === "Enter"){
+                            const updatedCardTitle = cardTitleInput.value.trim();
+                            const updatedCardBody = cardBodyInput.innerText;
+                            this.onCardEdit(cardPreview.dataset.cardpreviewId, updatedCardTitle, updatedCardBody);
+                            this.onCardView(cardPreview.dataset.cardpreviewId)
+                        }
+                    } else if (event.key === "Enter") {
+
+                        // let paragraph = inputField;
+                        // let words = paragraph.textContent.split(' ');
+                        
+                        // - Adding space when you enter to the next line.
+                        const selection = window.getSelection();
+                        const range = selection.getRangeAt(0);
+                        const space = document.createTextNode(" ");
+                        range.insertNode(space);
+                        range.collapse(false);
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                        
+                        const updatedCardTitle = cardTitleInput.value.trim();
+                        const updatedCardBody = cardBodyInput.innerText;
+                        this.onCardEdit(cardPreview.dataset.cardpreviewId, updatedCardTitle, updatedCardBody);
+                    }
+
                 });
             });
             // - For deleting a card preview -------------------------

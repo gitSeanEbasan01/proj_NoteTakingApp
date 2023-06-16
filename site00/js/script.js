@@ -235,12 +235,16 @@ const view = new CanvasListView(main, {
         
     },
     onCardEdit(id, title, body) {
-
+        const regex = /(\+[^\s]+)\s*/g;
+        const replaceBody = body.replace(regex, '<button class="card__body-button" contenteditable="false">$1</button> ');
+        const findMatch = body.match(regex);
+        
+        console.log(findMatch);
 
         const editedCard = {
             id: id,
             title: title,
-            body: body
+            body: replaceBody
         };
         saveCardToCanvas(editedCard, currentActiveCanvas);
 
@@ -290,11 +294,11 @@ view.canvasEventListeners();
 
 // ----------------------------------- DELETE CANVAS DATA WHEN YOU EXIT THE BROWSER (TEMPORARY) -----------------------------------
 
-window.onbeforeunload = function() {
+// window.onbeforeunload = function() {
 
-    localStorage.clear();
+//     localStorage.clear();
     
-}
+// }
 // window.onload = function() {
 
 //     localStorage.clear();
