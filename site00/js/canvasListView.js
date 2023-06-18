@@ -85,6 +85,8 @@ export default class CanvasListView {
 
             <div class="canvas__preview">
 
+
+                <canvas class="canvas__draw"></canvas>
                 
                 <div class="canvas__card-holder">
 
@@ -330,6 +332,60 @@ export default class CanvasListView {
 
         });
         
+        
+
+
+
+
+        
+
+
+
+        // - For Canvas Background Drawing ----------------------------------------------------------------------
+
+        const canvasDraw = this.root.querySelector(".canvas__draw");
+        const ctx = canvasDraw.getContext('2d');
+        let getCanvasPreviewStyle = window.getComputedStyle(canvasPreview);
+        canvasDraw.style.left = "-200px";
+        canvasDraw.style.transform = "translate(200px, 0)";
+        canvasDraw.width = parseInt(getCanvasPreviewStyle.width);
+        canvasDraw.height = parseInt(getCanvasPreviewStyle.height);
+        
+        function updateCanvasSize() {
+            canvasDraw.width = parseInt(getCanvasPreviewStyle.width);
+            canvasDraw.height = parseInt(getCanvasPreviewStyle.height);
+            _drawArrow();
+        }
+        
+        // Initialize the arrow points
+        let pointA = { x: 100, y: 200 };
+        let pointB = { x: 300, y: 200 };
+        
+        // Track the currently dragged point
+        let activePoint = null;
+        
+        const _drawArrow = () => {
+
+            // ctx.clearRect(0, 0, canvasDraw.width, canvasDraw.height);
+
+            // // Set the translation offset
+            // ctx.translate(20, 0); // Adjust the value as needed
+            
+            // // Draw the line
+            // ctx.beginPath();
+            // ctx.moveTo(pointA.x, pointA.y);
+            // ctx.lineTo(pointB.x, pointB.y);
+            // ctx.stroke();
+            ctx.moveTo(0 + 200, 0);
+            ctx.lineTo(190 + 200, 200);
+            ctx.stroke();
+
+            // // Reset the translation offset
+            // ctx.translate(-20, 0); // Reset the value to the original offset
+            
+        };
+        window.addEventListener('resize', updateCanvasSize);
+        _drawArrow();
         
     }
 
@@ -611,6 +667,9 @@ export default class CanvasListView {
 
         const MAX_TITLE_LENGTH = 30;
         const MAX_BODY_LENGTH = 40;
+        // const regex = /(\+[^\s]+)\s*/g;
+        // const regex = /(?<!<button[^>]*>)(\+[^\s]+)\s*/g;
+        // const replacedBody = body.replace(regex, '<button class="card__body-button" contenteditable="false">+</button> ');
 
         if (selected === true) {
             return`
@@ -688,56 +747,17 @@ export default class CanvasListView {
     _createCardPreview(cardId, title, body) {
 
         // const regex = /(\+[^\s]+)\s*/g;
-        // const replacedBody = body.replace(regex, '<button class="card__body-button" contenteditable="false">$1</button> ');
+        const regex = /(_[^\s]+)\s*/g;
+        const replacedBody = body.replace(regex, '<button class="card__body-button" contenteditable="false">$1</button> ');
 
-        // const html = `
-        //     <div class="canvas__card-preview" data-cardpreview-id="${cardId}">
-        //         <div class="card__border-highlight"></div>
-        //         <input class="card__title" type="text" placeholder="Title of Card" value="${title}">
-        //         <div class="card__body" contenteditable="true">${replacedBody}</div>
-        //     </div>`;
-
-        // return html;
-        
-        // let html = `
-        //     <div
-        //         class="canvas__card-preview"
-        //         data-cardpreview-id="${cardId}"
-        //     >
-        //         <div class="card__border-highlight"></div>
-                
-        //         <input class="card__title" type="text" placeholder="Title of Card" value="${title}">
-        //         <div class="card__body" contenteditable="true">`;
-
-
-        // let lastIndex = 0;
-        // let match;
-        // while ((match = regex.exec(body)) !== null) {
-        //     const buttonIndex = match.index;
-        //     const beforeText = body.substring(lastIndex, buttonIndex);
-        //     const buttonText = 'button'; // The specific text you want to replace the word with
-        //     const afterText = body.substring(buttonIndex + match[0].length);
-        //     html += `${beforeText} <button>button</button> `;
-        //     lastIndex = buttonIndex + match[0].length;
-        // }
-
-        // const remainingText = body.substring(lastIndex);
-        // html += `${remainingText}</div></div>`;
-
-        // return html;
-        
-
-        return`
-            <div
-                class="canvas__card-preview"
-                data-cardpreview-id="${cardId}"
-            >
+        const html = `
+            <div class="canvas__card-preview" data-cardpreview-id="${cardId}">
                 <div class="card__border-highlight"></div>
-                
                 <input class="card__title" type="text" placeholder="Title of Card" value="${title}">
-                <div class="card__body" contenteditable="true">${body}</div>
-            </div>
-        `
+                <div class="card__body" contenteditable="true">${replacedBody}</div>
+            </div>`;
+
+        return html;
         
     }
 

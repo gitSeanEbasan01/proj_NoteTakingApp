@@ -235,16 +235,11 @@ const view = new CanvasListView(main, {
         
     },
     onCardEdit(id, title, body) {
-        const regex = /(\+[^\s]+)\s*/g;
-        const replaceBody = body.replace(regex, '<button class="card__body-button" contenteditable="false">$1</button> ');
-        const findMatch = body.match(regex);
-        
-        console.log(findMatch);
 
         const editedCard = {
             id: id,
             title: title,
-            body: replaceBody
+            body: body
         };
         saveCardToCanvas(editedCard, currentActiveCanvas);
 
@@ -304,3 +299,18 @@ view.canvasEventListeners();
 //     localStorage.clear();
     
 // }
+
+
+
+
+
+// const canvasDraw = view.root.querySelector(".canvas__draw");
+// console.log(canvasDraw);
+
+// function canvasDrawing() {
+//     // console.log("This worked");
+//     canvasDraw.addEventListener('click', () => {
+//         console.log("This worked");
+//     });
+// }
+// canvasDrawing();

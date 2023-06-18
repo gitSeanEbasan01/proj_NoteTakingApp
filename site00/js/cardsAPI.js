@@ -122,11 +122,6 @@ export default class CardsAPI{
         
     }
     static saveCardToCanvas(cardsToSave, activeCanvas) {
-        // const regex = /(\+[^\s]+)\s*/g;
-        // const replaceBody = cardsToSave.body.replace(regex, '<button>thisButton</button> ')
-        // const regex00 = /<button class="card__body-button">([^<]+)<\/button>/g;
-        // const matches = cardsToSave.body.match(regex00);
-        // console.log(matches);
 
         const cardInCanvas = CardsAPI.getActiveCanvasData(activeCanvas);
         const existing = cardInCanvas.find(card => card.id == cardsToSave.id);
