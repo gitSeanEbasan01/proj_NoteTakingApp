@@ -1,11 +1,13 @@
 import CanvasAPI from "./canvasAPI.js";
 import CanvasListView from "./canvasListView.js";
 import CardsAPI from "./cardsAPI.js";
+import DrawAPI from "./drawAPI.js";
 
 
 const main = document.getElementById("app");
 const { getAllCanvas, saveCanvas, deleteCanvas, createCanvasData } = CanvasAPI;
-const { getAllCards, getActiveCanvasData, saveCardToCanvas, deleteCardInCanvas, saveActiveCard, saveInactiveCard } = CardsAPI;
+const { getAllCards, getActiveCanvasData, saveCardToCanvas, saveChildCardToCanvas, deleteCardInCanvas, saveActiveCard, saveInactiveCard } = CardsAPI;
+const { createDrawData } = DrawAPI;
 
 const canvas = getAllCanvas();
 
@@ -54,7 +56,7 @@ const view = new CanvasListView(main, {
             view.updateCardPreview(undefined);
         }
 
-        currentActiveCard = undefined;
+        // currentActiveCard = undefined;
 
     },
     onCanvasAdd() {
@@ -90,6 +92,17 @@ const view = new CanvasListView(main, {
         view.updateCardsList(getActiveCanvasData(currentActiveCanvas));
         view.canvasPreviewEventListeners();
 
+
+        // - For updating if a card preview should appear. -----------------
+        const getCards = getActiveCanvasData(currentActiveCanvas)
+        const findActiveCard = getCards.find(card => card.selected == true)
+        if (findActiveCard) {
+            view.updateCardPreview(findActiveCard);
+            view.cardPreviewEventListeners();
+        } else {
+            view.updateCardPreview(undefined);
+        }
+
     },
     onCanvasDelete(id) {
 
@@ -118,11 +131,20 @@ const view = new CanvasListView(main, {
 
             view.updateCardsList(getActiveCanvasData(currentActiveCanvas));
             view.canvasPreviewEventListeners();
-            currentActiveCard = undefined;
+
+
+            // - For updating if a card preview should appear. -----------------
+            const getCards = getActiveCanvasData(currentActiveCanvas)
+            const findActiveCard = getCards.find(card => card.selected == true)
+            if (findActiveCard) {
+                view.updateCardPreview(findActiveCard);
+                view.cardPreviewEventListeners();
+            } else {
+                view.updateCardPreview(undefined);
+        }
             
         } else if (updatedCanvas.length == 0) {
             view.updateCardsList(CardsAPI.getAllCards());
-            currentActiveCard = undefined;
         }
 
     },
@@ -189,7 +211,7 @@ const view = new CanvasListView(main, {
             const getCanvasStyle = window.getComputedStyle(canvasPreview);
     
             const newCard = {
-                id: "",
+                id: undefined,
                 selected: false,
                 title: "Title of Card",
                 body: "Body of Card",
@@ -209,6 +231,41 @@ const view = new CanvasListView(main, {
             view.canvasPreviewEventListeners();
         }
 
+        
+    },
+    onChildCardAdd(button, parentCardId) {
+
+        const canvasPreview = view.root.querySelector(".canvas__preview");
+        const getCanvasStyle = window.getComputedStyle(canvasPreview);
+
+        const newCard = {
+            parentId: parentCardId,
+            id: parseInt(button.dataset.buttonId),
+            selected: false,
+            title: `${button.innerText}`,
+            body: "Body of a Card",
+            updated: "",
+            positionX: `${Math.floor(Math.random() * parseInt(getCanvasStyle.width))}px`,
+            positionY: `${Math.floor(Math.random() * parseInt(getCanvasStyle.height))}px`
+        };
+        saveChildCardToCanvas(newCard, currentActiveCanvas);
+
+
+
+        
+        const updatedCards = getActiveCanvasData(currentActiveCanvas);
+        
+        view.updateCardsList(updatedCards);
+        view.canvasPreviewEventListeners();
+        
+    },
+    onCardLines(activeCanvas, selectedCardId, createdChildCardId) {
+
+        const getCardsInCanvas = getActiveCanvasData(currentActiveCanvas)
+        const findSelectedCard = getCardsInCanvas.find(card => card.id == selectedCardId);
+        const findChildCard = getCardsInCanvas.find(card => card.id == createdChildCardId);
+
+        createDrawData(activeCanvas, findSelectedCard, findChildCard);
         
     },
     onCardDelete(id) {

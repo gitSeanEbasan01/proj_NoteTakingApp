@@ -42,6 +42,8 @@ export default class CardsAPI{
             [] Panning
             [] Zooming
         [] Options for canvas and cards (renaming, deleting, etc.)
+        {} Problem
+            [] When the canvas is empty from deleting all of the cards, you're not able to click on the addCard button. Fix this.
         
     */
 
@@ -122,10 +124,10 @@ export default class CardsAPI{
         
     }
     static saveCardToCanvas(cardsToSave, activeCanvas) {
-
+        
         const cardInCanvas = CardsAPI.getActiveCanvasData(activeCanvas);
         const existing = cardInCanvas.find(card => card.id == cardsToSave.id);
-
+        
         if (existing) {
             existing.title = cardsToSave.title;
             existing.body = cardsToSave.body;
@@ -136,7 +138,31 @@ export default class CardsAPI{
             cardInCanvas.push(cardsToSave);
         }
 
+        
+        const keys = Object.keys(localStorage);
+        let keyName;
 
+        for(let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+
+            if (key.includes(activeCanvas.id)) {
+                keyName = key
+                break;
+            }
+        }
+
+        localStorage.setItem(keyName, JSON.stringify(cardInCanvas));
+        
+    }
+
+    static saveChildCardToCanvas(cardsToSave, activeCanvas) {
+
+        const cardInCanvas = CardsAPI.getActiveCanvasData(activeCanvas);
+
+
+        cardsToSave.updated = new Date().toISOString();
+        cardInCanvas.push(cardsToSave);
+        
 
         const keys = Object.keys(localStorage);
         let keyName;

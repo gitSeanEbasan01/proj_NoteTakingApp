@@ -113,7 +113,7 @@ export default class CanvasAPI{
         const findCanvas = canvas.find(canva => canva.id == addedCanvas.id);
         
         const generateCanvasKey = function() {
-            return 'notes-app-canvas-' + findCanvas.id + '_' + Math.random().toString(36).substring(2, 9);
+            return 'notesapp-canvas-' + findCanvas.id + '_' + Math.random().toString(36).substring(2, 9);
         };
 
 

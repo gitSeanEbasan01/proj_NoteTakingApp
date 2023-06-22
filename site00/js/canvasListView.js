@@ -3,7 +3,7 @@ import CardsAPI from "./cardsAPI.js";
 
 export default class CanvasListView {
 
-    constructor(root, { onActiveCanvas, onCanvasSelect, onCanvasAdd, onCanvasDelete, onActiveCard, onCardSelect, onCardDeselect, onCardAdd, onCardDelete, onCardView, onCardEdit } = {}) {
+    constructor(root, { onActiveCanvas, onCanvasSelect, onCanvasAdd, onCanvasDelete, onActiveCard, onCardSelect, onCardDeselect, onCardAdd, onChildCardAdd, onCardLines, onCardDelete, onCardView, onCardEdit } = {}) {
         this.root = root;
         this.onActiveCanvas = onActiveCanvas;
         this.onCanvasSelect = onCanvasSelect;
@@ -14,6 +14,8 @@ export default class CanvasListView {
         this.onCardSelect = onCardSelect;
         this.onCardDeselect = onCardDeselect;
         this.onCardAdd = onCardAdd;
+        this.onChildCardAdd = onChildCardAdd;
+        this.onCardLines = onCardLines;
         this.onCardDelete = onCardDelete;
         this.onCardView = onCardView;
         this.onCardEdit = onCardEdit;
@@ -207,6 +209,43 @@ export default class CanvasListView {
 
 
 
+
+
+
+        // - For Canvas Background Drawing ----------------------------------------------------------------------
+
+        const canvasDraw = this.root.querySelector(".canvas__draw");
+        const ctx = canvasDraw.getContext('2d');
+        let getCanvasPreviewStyle = window.getComputedStyle(canvasPreview);
+
+        canvasDraw.style.left = "0";
+        canvasDraw.style.transform = "translate(0, 0)";
+        canvasDraw.width = parseInt(getCanvasPreviewStyle.width);
+        canvasDraw.height = parseInt(getCanvasPreviewStyle.height);
+        
+
+
+        // function updateCanvasSize() {
+        //     canvasDraw.width = parseInt(getCanvasPreviewStyle.width);
+        //     canvasDraw.height = parseInt(getCanvasPreviewStyle.height);
+        //     _drawArrow();
+        // }
+        
+        // const _drawArrow = (endX, endY) => {
+
+        //     ctx.clearRect(0, 0, canvasDraw.width, canvasDraw.height);
+
+        //     ctx.beginPath();
+        //     ctx.moveTo(0, 0);
+        //     ctx.lineTo(endX, endY);
+        //     ctx.stroke();
+            
+        // };
+        // window.addEventListener('resize', updateCanvasSize);
+        // _drawArrow();
+
+
+
         
 
 
@@ -230,6 +269,9 @@ export default class CanvasListView {
             
             clickedCard.style.left = `${cardLeft + e.movementX}px`;
             clickedCard.style.top = `${cardTop + e.movementY}px`;
+            // _drawArrow(cardLeft, cardTop);
+            // console.log(parseInt(clickedCard.style.left));
+            // console.log(cardLeft);
             
             
             if (e.movementX > 0 || e.movementY > 0 || e.movementX < 0 || e.movementY < 0){
@@ -341,51 +383,38 @@ export default class CanvasListView {
 
 
 
-        // - For Canvas Background Drawing ----------------------------------------------------------------------
+        // // - For Canvas Background Drawing ----------------------------------------------------------------------
 
-        const canvasDraw = this.root.querySelector(".canvas__draw");
-        const ctx = canvasDraw.getContext('2d');
-        let getCanvasPreviewStyle = window.getComputedStyle(canvasPreview);
-        canvasDraw.style.left = "-200px";
-        canvasDraw.style.transform = "translate(200px, 0)";
-        canvasDraw.width = parseInt(getCanvasPreviewStyle.width);
-        canvasDraw.height = parseInt(getCanvasPreviewStyle.height);
+        // const canvasDraw = this.root.querySelector(".canvas__draw");
+        // const ctx = canvasDraw.getContext('2d');
+        // let getCanvasPreviewStyle = window.getComputedStyle(canvasPreview);
+        // canvasDraw.style.left = "0";
+        // canvasDraw.style.transform = "translate(0, 0)";
+        // canvasDraw.width = parseInt(getCanvasPreviewStyle.width);
+        // canvasDraw.height = parseInt(getCanvasPreviewStyle.height);
         
-        function updateCanvasSize() {
-            canvasDraw.width = parseInt(getCanvasPreviewStyle.width);
-            canvasDraw.height = parseInt(getCanvasPreviewStyle.height);
-            _drawArrow();
-        }
+        // function updateCanvasSize() {
+        //     canvasDraw.width = parseInt(getCanvasPreviewStyle.width);
+        //     canvasDraw.height = parseInt(getCanvasPreviewStyle.height);
+        //     _drawArrow();
+        // }
         
-        // Initialize the arrow points
-        let pointA = { x: 100, y: 200 };
-        let pointB = { x: 300, y: 200 };
+        // // Initialize the arrow points
+        // let pointA = { x: 100, y: 200 };
+        // let pointB = { x: 300, y: 200 };
         
-        // Track the currently dragged point
-        let activePoint = null;
+        // // Track the currently dragged point
+        // let activePoint = null;
         
-        const _drawArrow = () => {
+        // const _drawArrow = () => {
 
-            // ctx.clearRect(0, 0, canvasDraw.width, canvasDraw.height);
-
-            // // Set the translation offset
-            // ctx.translate(20, 0); // Adjust the value as needed
+        //     ctx.moveTo(0, 0);
+        //     ctx.lineTo(190, 200);
+        //     ctx.stroke();
             
-            // // Draw the line
-            // ctx.beginPath();
-            // ctx.moveTo(pointA.x, pointA.y);
-            // ctx.lineTo(pointB.x, pointB.y);
-            // ctx.stroke();
-            ctx.moveTo(0 + 200, 0);
-            ctx.lineTo(190 + 200, 200);
-            ctx.stroke();
-
-            // // Reset the translation offset
-            // ctx.translate(-20, 0); // Reset the value to the original offset
-            
-        };
-        window.addEventListener('resize', updateCanvasSize);
-        _drawArrow();
+        // };
+        // window.addEventListener('resize', updateCanvasSize);
+        // _drawArrow();
         
     }
 
@@ -667,9 +696,7 @@ export default class CanvasListView {
 
         const MAX_TITLE_LENGTH = 30;
         const MAX_BODY_LENGTH = 40;
-        // const regex = /(\+[^\s]+)\s*/g;
-        // const regex = /(?<!<button[^>]*>)(\+[^\s]+)\s*/g;
-        // const replacedBody = body.replace(regex, '<button class="card__body-button" contenteditable="false">+</button> ');
+        // ${title.substring(0, MAX_TITLE_LENGTH)}${title.length > MAX_TITLE_LENGTH ? "..." : ""}
 
         if (selected === true) {
             return`
@@ -683,8 +710,8 @@ export default class CanvasListView {
                 >
                     <div class="card__border-highlight"></div>
                     
-                    <div class="card__small-title">${title.substring(0, MAX_TITLE_LENGTH)}${title.length > MAX_TITLE_LENGTH ? "..." : ""}</div>
-                    <div class="card__small-body">${body.substring(0, MAX_BODY_LENGTH)}${body.length > MAX_BODY_LENGTH ? "..." : ""}</div>
+                    <div class="card__small-title">${title}</div>
+                    <div class="card__small-body">${body}</div>
                     <div class="card__small-updated">${updated.toLocaleString(undefined, { 
                         month: "long",
                         day: "numeric",
@@ -707,8 +734,8 @@ export default class CanvasListView {
                 >
                     <div class="card__border-highlight"></div>
                     
-                    <div class="card__small-title">${title.substring(0, MAX_TITLE_LENGTH)}${title.length > MAX_TITLE_LENGTH ? "..." : ""}</div>
-                    <div class="card__small-body">${body.substring(0, MAX_BODY_LENGTH)}${body.length > MAX_BODY_LENGTH ? "..." : ""}</div>
+                    <div class="card__small-title">${title}</div>
+                    <div class="card__small-body">${body}</div>
                     <div class="card__small-updated">${updated.toLocaleString(undefined, { 
                         month: "long",
                         day: "numeric",
@@ -746,15 +773,11 @@ export default class CanvasListView {
 
     _createCardPreview(cardId, title, body) {
 
-        // const regex = /(\+[^\s]+)\s*/g;
-        const regex = /(_[^\s]+)\s*/g;
-        const replacedBody = body.replace(regex, '<button class="card__body-button" contenteditable="false">$1</button> ');
-
         const html = `
             <div class="canvas__card-preview" data-cardpreview-id="${cardId}">
                 <div class="card__border-highlight"></div>
                 <input class="card__title" type="text" placeholder="Title of Card" value="${title}">
-                <div class="card__body" contenteditable="true">${replacedBody}</div>
+                <div class="card__body" contenteditable="true">${body}</div>
             </div>`;
 
         return html;
@@ -863,46 +886,77 @@ export default class CanvasListView {
         canvasCardPreview.forEach(cardPreview => {
             const cardTitleInput = cardPreview.querySelector(".card__title");
             const cardBodyInput = cardPreview.querySelector(".card__body");
+            const wordButton = cardPreview.querySelectorAll(".cardBody-button");
+
+            // - For clicking a word button -----------
+            if (wordButton.length != 0) {
+                wordButton.forEach(button => {
+                    button.addEventListener('click', () => {
+
+                        const getCardsInCanvas = CardsAPI.getActiveCanvasData(this.savedActiveCanvas);
+                        const existing = getCardsInCanvas.find(card => card.id == Number(button.dataset.buttonId));
+
+                        if (existing != undefined) {
+                            console.log("there is existing card");
+                            this.onCardView(button.dataset.buttonId);
+                            this.onCardSelect(button.dataset.buttonId, false)
+                        } else {
+                            this.onChildCardAdd(button, this.savedOpenCardPreview.id);
+                            // this.onCardLines(this.savedActiveCanvas, this.savedOpenCardPreview.id, button.dataset.buttonId);
+                        }
+
+                        
+                    });
+                });
+            }
 
             [cardTitleInput, cardBodyInput].forEach(inputField => {
-                // cardBodyInput.focus();
-                // let range = document.createRange();
-                // let selection = window.getSelection();
-                // range.selectNodeContents(cardBodyInput);
-                // range.collapse(false);
-                // selection.removeAllRanges();
-                // selection.addRange(range);
+                
+                let buttonWordConvert = () => {
+                        
+                    const regex = /(_[^\s]+)\s*/g;
+                    const replacedBody = cardBodyInput.innerHTML.replace(regex, `<button class="cardBody-button" data-button-id="undefined" contenteditable="false">$1</button>&nbsp;`);
+                    cardBodyInput.innerHTML = replacedBody;
+                    
+                    let replaceDiv = cardBodyInput.innerHTML.replace(/<div>/g, '').replace(/<\/div>/g, '')
+                    cardBodyInput.innerHTML = replaceDiv;
+                    const cardBodyChildren = cardBodyInput.children;
+                    for (let i = 0; i < cardBodyChildren.length; i++) {
+                        let child = cardBodyChildren[i];
+                        
+                        if (child.dataset.buttonId === "undefined" || child.dataset.buttonId == undefined) {
+                            // && child.className === "cardBody-button"
+                            let randomizeId = Math.floor(Math.random() * 1000000);
+                            let name = child.innerHTML.replace('_', '');
+                            child.dataset.buttonId = randomizeId;
+                            child.innerHTML = name;
+                        }
+                    }
+
+
+                    const updatedCardTitle = cardTitleInput.value.trim();
+
+                    let convertedStr = cardBodyInput.innerHTML.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    cardBodyInput.innerHTML = convertedStr;
+
+                    this.onCardEdit(cardPreview.dataset.cardpreviewId, updatedCardTitle, cardBodyInput.innerText);
+                    this.onCardView(cardPreview.dataset.cardpreviewId);
+
+                };
                 
                 inputField.addEventListener("blur", () => {
-                    const updatedCardTitle = cardTitleInput.value.trim();
-                    const updatedCardBody = cardBodyInput.innerText;
-    
-                    this.onCardEdit(cardPreview.dataset.cardpreviewId, updatedCardTitle, updatedCardBody);
-                    this.onCardView(cardPreview.dataset.cardpreviewId)
+                    buttonWordConvert();
                 });
                 inputField.addEventListener("keydown", (event) => {
-                    // const updatedCardTitle = cardTitleInput.value.trim();
-                    // const updatedCardBody = cardBodyInput.innerText;
-                    // this.onCardEdit(cardPreview.dataset.cardpreviewId, updatedCardTitle, updatedCardBody);
                     
                     if (event.ctrlKey || event.metaKey){
                         if (event.ctrlKey && event.key === "Enter") {
-                            const updatedCardTitle = cardTitleInput.value.trim();
-                            const updatedCardBody = cardBodyInput.innerText;
-                            this.onCardEdit(cardPreview.dataset.cardpreviewId, updatedCardTitle, updatedCardBody);
-                            this.onCardView(cardPreview.dataset.cardpreviewId)
+                            buttonWordConvert();
                         } else if (event.metaKey && event.key === "Enter"){
-                            const updatedCardTitle = cardTitleInput.value.trim();
-                            const updatedCardBody = cardBodyInput.innerText;
-                            this.onCardEdit(cardPreview.dataset.cardpreviewId, updatedCardTitle, updatedCardBody);
-                            this.onCardView(cardPreview.dataset.cardpreviewId)
+                            buttonWordConvert();
                         }
                     } else if (event.key === "Enter") {
 
-                        // let paragraph = inputField;
-                        // let words = paragraph.textContent.split(' ');
-                        
-                        // - Adding space when you enter to the next line.
                         const selection = window.getSelection();
                         const range = selection.getRangeAt(0);
                         const space = document.createTextNode(" ");
@@ -910,10 +964,7 @@ export default class CanvasListView {
                         range.collapse(false);
                         selection.removeAllRanges();
                         selection.addRange(range);
-                        
-                        const updatedCardTitle = cardTitleInput.value.trim();
-                        const updatedCardBody = cardBodyInput.innerText;
-                        this.onCardEdit(cardPreview.dataset.cardpreviewId, updatedCardTitle, updatedCardBody);
+
                     }
 
                 });
