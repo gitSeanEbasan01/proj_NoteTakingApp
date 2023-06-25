@@ -1,13 +1,11 @@
 import CanvasAPI from "./canvasAPI.js";
 import CanvasListView from "./canvasListView.js";
 import CardsAPI from "./cardsAPI.js";
-import DrawAPI from "./drawAPI.js";
 
 
 const main = document.getElementById("app");
 const { getAllCanvas, saveCanvas, deleteCanvas, createCanvasData } = CanvasAPI;
 const { getAllCards, getActiveCanvasData, saveCardToCanvas, saveChildCardToCanvas, deleteCardInCanvas, saveActiveCard, saveInactiveCard } = CardsAPI;
-const { createDrawData } = DrawAPI;
 
 const canvas = getAllCanvas();
 
@@ -57,6 +55,7 @@ const view = new CanvasListView(main, {
         }
 
         // currentActiveCard = undefined;
+        view.backgroundDrawing();
 
     },
     onCanvasAdd() {
@@ -103,6 +102,8 @@ const view = new CanvasListView(main, {
             view.updateCardPreview(undefined);
         }
 
+        view.backgroundDrawing();
+
     },
     onCanvasDelete(id) {
 
@@ -141,7 +142,9 @@ const view = new CanvasListView(main, {
                 view.cardPreviewEventListeners();
             } else {
                 view.updateCardPreview(undefined);
-        }
+            }
+
+            view.backgroundDrawing();
             
         } else if (updatedCanvas.length == 0) {
             view.updateCardsList(CardsAPI.getAllCards());
@@ -217,7 +220,8 @@ const view = new CanvasListView(main, {
                 body: "Body of Card",
                 updated: "",
                 positionX: `${Math.floor(Math.random() * parseInt(getCanvasStyle.width))}px`,
-                positionY: `${Math.floor(Math.random() * parseInt(getCanvasStyle.height))}px`
+                positionY: `${Math.floor(Math.random() * parseInt(getCanvasStyle.height))}px`,
+                child: false
             };
             saveCardToCanvas(newCard, currentActiveCanvas);
             
@@ -229,6 +233,8 @@ const view = new CanvasListView(main, {
     
             view.updateCardsList(updatedCards);
             view.canvasPreviewEventListeners();
+
+            view.backgroundDrawing();
         }
 
         
@@ -246,7 +252,8 @@ const view = new CanvasListView(main, {
             body: "Body of a Card",
             updated: "",
             positionX: `${Math.floor(Math.random() * parseInt(getCanvasStyle.width))}px`,
-            positionY: `${Math.floor(Math.random() * parseInt(getCanvasStyle.height))}px`
+            positionY: `${Math.floor(Math.random() * parseInt(getCanvasStyle.height))}px`,
+            child: true
         };
         saveChildCardToCanvas(newCard, currentActiveCanvas);
 
@@ -257,15 +264,8 @@ const view = new CanvasListView(main, {
         
         view.updateCardsList(updatedCards);
         view.canvasPreviewEventListeners();
-        
-    },
-    onCardLines(activeCanvas, selectedCardId, createdChildCardId) {
 
-        const getCardsInCanvas = getActiveCanvasData(currentActiveCanvas)
-        const findSelectedCard = getCardsInCanvas.find(card => card.id == selectedCardId);
-        const findChildCard = getCardsInCanvas.find(card => card.id == createdChildCardId);
-
-        createDrawData(activeCanvas, findSelectedCard, findChildCard);
+        view.backgroundDrawing();
         
     },
     onCardDelete(id) {
@@ -279,6 +279,8 @@ const view = new CanvasListView(main, {
         
         view.updateCardsList(updatedCards);
         view.canvasPreviewEventListeners();
+
+        view.backgroundDrawing();
 
     },
     onCardView(id) {
@@ -342,7 +344,7 @@ view.canvasEventListeners();
 
 
 
-
+// view.backgroundDrawing();
 
 // ----------------------------------- DELETE CANVAS DATA WHEN YOU EXIT THE BROWSER (TEMPORARY) -----------------------------------
 

@@ -3,7 +3,7 @@ import CardsAPI from "./cardsAPI.js";
 
 export default class CanvasListView {
 
-    constructor(root, { onActiveCanvas, onCanvasSelect, onCanvasAdd, onCanvasDelete, onActiveCard, onCardSelect, onCardDeselect, onCardAdd, onChildCardAdd, onCardLines, onCardDelete, onCardView, onCardEdit } = {}) {
+    constructor(root, { onActiveCanvas, onCanvasSelect, onCanvasAdd, onCanvasDelete, onActiveCard, onCardSelect, onCardDeselect, onCardAdd, onChildCardAdd, onCardDelete, onCardView, onCardEdit } = {}) {
         this.root = root;
         this.onActiveCanvas = onActiveCanvas;
         this.onCanvasSelect = onCanvasSelect;
@@ -15,7 +15,6 @@ export default class CanvasListView {
         this.onCardDeselect = onCardDeselect;
         this.onCardAdd = onCardAdd;
         this.onChildCardAdd = onChildCardAdd;
-        this.onCardLines = onCardLines;
         this.onCardDelete = onCardDelete;
         this.onCardView = onCardView;
         this.onCardEdit = onCardEdit;
@@ -214,6 +213,12 @@ export default class CanvasListView {
 
         // - For Canvas Background Drawing ----------------------------------------------------------------------
 
+        /* 
+            - CLUE ... lines.forEach(line => drawLine(line.pointA, line.pointB));
+            childCard.forEach(card => drawLine(parentCardPos, childCardPos))
+        */
+        
+
         const canvasDraw = this.root.querySelector(".canvas__draw");
         const ctx = canvasDraw.getContext('2d');
         let getCanvasPreviewStyle = window.getComputedStyle(canvasPreview);
@@ -278,6 +283,7 @@ export default class CanvasListView {
                 this.cardDragged = true;
                 cardCursor = "grab";
                 clickedCard.style.cursor = cardCursor;
+                this.backgroundDrawing();
             }
             // - For disabling the pointer events of the card preview when hovering a card.
             if (this.savedOpenCardPreview){
@@ -417,6 +423,96 @@ export default class CanvasListView {
         // _drawArrow();
         
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    backgroundDrawing() {
+
+        const getCardsInRoot = this.root.querySelectorAll(".canvas__card-item");
+        const getCardsInCanvas = CardsAPI.getActiveCanvasData(this.savedActiveCanvas);
+        const findChildCards = getCardsInCanvas.filter(card => card.child == true)
+
+        const canvasPreview = this.root.querySelector(".canvas__preview");
+        const canvasDraw = this.root.querySelector(".canvas__draw");
+        const ctx = canvasDraw.getContext('2d');
+        let getCanvasPreviewStyle = window.getComputedStyle(canvasPreview);
+        canvasDraw.width = parseInt(getCanvasPreviewStyle.width);
+        canvasDraw.height = parseInt(getCanvasPreviewStyle.height);
+
+        function drawLine(pointA, pointB) {
+            // ctx.clearRect(0, 0, canvasDraw.width, canvasDraw.height);
+            ctx.beginPath();
+            ctx.moveTo(parseInt(pointA.style.left), parseInt(pointA.style.top));
+            ctx.lineTo(parseInt(pointB.style.left), parseInt(pointB.style.top));
+            ctx.strokeStyle = "#594B38";
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        };
+
+
+        findChildCards.forEach(childCard => {
+            let rootParentCard;
+            let rootChildCard;
+
+            for (let i = 0; i < getCardsInRoot.length; i++) {
+                let cardInRoot = getCardsInRoot[i];
+                if (childCard.id == cardInRoot.dataset.cardId) {
+                    // console.log(childCard.id);
+                    rootChildCard = cardInRoot;
+                }
+                if (childCard.parentId == cardInRoot.dataset.cardId) {
+                    // console.log(cardInRoot);
+                    rootParentCard = cardInRoot;
+                }
+            }
+            
+            if (rootParentCard && rootChildCard) {
+                drawLine(rootParentCard, rootChildCard);
+            }
+            
+        });
+
+        
+        
+    }
+
+
+    
+    
+    
+    
+    
+    
+    
+
+    
 
 
 
@@ -808,18 +904,6 @@ export default class CanvasListView {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     // - For Selecting/Deleting Cards -----------------------------------------------
 
 
@@ -902,7 +986,6 @@ export default class CanvasListView {
                             this.onCardSelect(button.dataset.buttonId, false)
                         } else {
                             this.onChildCardAdd(button, this.savedOpenCardPreview.id);
-                            // this.onCardLines(this.savedActiveCanvas, this.savedOpenCardPreview.id, button.dataset.buttonId);
                         }
 
                         
