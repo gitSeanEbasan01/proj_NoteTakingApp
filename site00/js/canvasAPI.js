@@ -33,7 +33,7 @@ export default class CanvasAPI{
             // - Updating existing id
             existing.title = canvasToSave.title;
             // existing.body = canvasToSave.body;
-            existing.updated = new Date().toISOString();
+            // existing.updated = new Date().toISOString();
         } else {
             // - Creating new id
 

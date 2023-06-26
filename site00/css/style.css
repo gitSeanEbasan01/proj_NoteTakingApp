@@ -31,7 +31,6 @@
 .top__toggle-side{
     position: absolute;
     top: calc(15px / 2);
-    left: calc(200px + 15px);
     width: 25px;
     height: 25px;
 
@@ -42,7 +41,11 @@
     position: absolute;
     transform: translate(0 ,-50%);
     top: 50%;
-    left: calc(200px + 60px);
+    border-radius: 5px;
+    background-color: #ede0d4;
+    color: #444444;
+    font-weight: 700;
+    padding: 2px;
 }
 
 
@@ -60,6 +63,14 @@
     width: 200px;
     height: calc(100% - 40px);
     background-color: #7f5539;
+    z-index: 1;
+
+    overflow: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.side-panel::-webkit-scrollbar{
+    display: none;
 }
 
 
@@ -228,7 +239,7 @@
     position: absolute;
     transform: translate(-50%, -50%);
     top: 50%;
-    left: 250px;
+    /* left: 250px; */
     width: 40px;
     height: 40px;
     z-index: 3;
@@ -250,10 +261,11 @@
 .canvas__preview{
     position: absolute;
     top: 40px;
-    left: 200px;
-    width: calc(100% - 215px);
-    height: calc(100% - 55px);
+    /* left: 200px; */
+    /* width: calc(100% - 215px); */
+    /* height: calc(100% - 55px); */
     border-radius: 10px;
+    z-index: 2;
     
     overflow: hidden;
     background-color: #ddb892;
@@ -412,10 +424,16 @@
     font-size: 1.2em;
     line-height: 1.5;
     resize: none;
-    /* overflow-y: hidden; */
+    overflow: auto;
 
     color: #ede0d4;
     background-color: #9c6644;
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.card__body::-webkit-scrollbar{
+    display: none;
 }
 
 .cardBody-button{

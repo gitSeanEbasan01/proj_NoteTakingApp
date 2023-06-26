@@ -25,25 +25,39 @@ export default class CardsAPI{
             [X] When you drag or select a card, it will be placed on top of other cards to know which is the focus.
         [] Card Preview Edit
             [X] Open preview.
-            [] Fix the text format of the card (CSS)
-            [] Disable pointer events of card preview when hovering a card
-            [] Change text, save, and display on card
+            [X] Fix the text format of the card (CSS)
+            [X] Disable pointer events of card preview when hovering a card
+            [X] Change text, save, and display on card
             [] Make it draggable
             [] Make it resizable
             [] when you double click on the edge, it increases size and can be dragged but cannot be resized.
             [] ...Plan on what to make for the card preview.
-            [] ...Look up how text linking works.
+            [X] ...Look up how text linking works.
         [] Change Adding card
             [] When double clicking on canvas preview, add a card with the mouse position as the position of the added card.
             [] When clicking on the add card button, instead of creating a card in a random position, make an indicator follow the mouse pointer and when clicked again, it creates a card in mouse position.
         [] Adding Main Canvas Feature for default or go to view.
         [] Canvas list animation.
-        [] Movement of card holder
-            [] Panning
-            [] Zooming
         [] Options for canvas and cards (renaming, deleting, etc.)
-        {} Problem
-            [] When the canvas is empty from deleting all of the cards, you're not able to click on the addCard button. Fix this.
+        {X} Problem
+            [X] When the canvas is empty from deleting all of the cards, you're not able to click on the addCard button. Fix this.
+        {} IMPORTANT: Finish in the Week
+            [X] Review Code.. Add Notes
+            [] Card Preview Edit
+                [] Make it draggable
+            [] Movement of card holder
+                [] Panning
+                [] Zooming
+            [X] Renaming of Canvas
+                [X] Changing Canvas title
+            [] Profile Picture
+                [] Change Photo
+                [] Change Name
+                [] Change to Offline
+            [] Short Tutorial
+            [X] Toggle Side panel button
+            [] Media Query
+                [] For mobile users.
         
     */
 

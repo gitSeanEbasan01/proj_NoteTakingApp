@@ -3,12 +3,13 @@ import CardsAPI from "./cardsAPI.js";
 
 export default class CanvasListView {
 
-    constructor(root, { onActiveCanvas, onCanvasSelect, onCanvasAdd, onCanvasDelete, onActiveCard, onCardSelect, onCardDeselect, onCardAdd, onChildCardAdd, onCardDelete, onCardView, onCardEdit } = {}) {
+    constructor(root, { onActiveCanvas, onCanvasSelect, onCanvasAdd, onCanvasDelete, onCanvasEdit, onActiveCard, onCardSelect, onCardDeselect, onCardAdd, onChildCardAdd, onCardDelete, onCardView, onCardEdit } = {}) {
         this.root = root;
         this.onActiveCanvas = onActiveCanvas;
         this.onCanvasSelect = onCanvasSelect;
         this.onCanvasAdd = onCanvasAdd;
         this.onCanvasDelete = onCanvasDelete;
+        this.onCanvasEdit = onCanvasEdit;
 
         this.onActiveCard = onActiveCard;
         this.onCardSelect = onCardSelect;
@@ -26,7 +27,7 @@ export default class CanvasListView {
         this.root.innerHTML = `
             <div class="top-bar">
                 <button class="top__toggle-side" type="button"></button>
-                <div class="top__current-canvas">Main Canvas</div>
+                <input class="top__current-canvas" type="text" placeholder="Name of Canvas">
             </div>
 
 
@@ -120,11 +121,96 @@ export default class CanvasListView {
 
 
 
-        // - Button to add a new note ------------------------
+
+        // - Opening and Closing the Side Panel ---------------------------------------------------
+
+
+        const canvasPreview = this.root.querySelector(".canvas__preview");
+        const topToggleSide = this.root.querySelector(".top__toggle-side");
+        const topCurrentCanvas = this.root.querySelector(".top__current-canvas");
+        const sidePanel = this.root.querySelector(".side-panel");
+        const btnAddCard = this.root.querySelector(".card__add");
+
+        
+        function updateCanvasSize(newNumber) {
+            const getInnerWidth = window.innerWidth;
+            const getInnerHeight = window.innerHeight;
+            let leftWidth = newNumber;
+            let calculatedLeft = leftWidth + 15;
+            canvasPreview.style.width = `${getInnerWidth.toString() - calculatedLeft}px`;
+            canvasPreview.style.height = `${getInnerHeight.toString() - 55}px`;
+            canvasPreview.style.left = leftWidth + "px";
+            canvasPreview.style.transition = ".3s left ease-in-out, .3s width ease-in-out"
+        };
+        function updateSidePanel(ifOpacity, buttonLeft, toggleLeft, currentLeft) {
+            topToggleSide.style.left = `${toggleLeft + 15}px`;
+            topToggleSide.style.transition = ".3s left ease-in-out"
+
+            topCurrentCanvas.style.left = `${currentLeft + 60}px`;
+            topCurrentCanvas.style.transition = ".3s left ease-in-out"
+            
+            sidePanel.style.opacity = ifOpacity;
+            sidePanel.style.transition = ".3s opacity ease-in-out"
+            
+            btnAddCard.style.left = buttonLeft + "px";
+            btnAddCard.style.transition = ".3s left ease-in-out"
+        };
+
+        let openSidePanel = true;
+        let toggleLeft = 200;
+        let currentLeft = 200;
+        let editLeft = 200;
+        let buttonLeft = 250;
+
+        const toggleSide = this.root.querySelector(".top__toggle-side");
+        toggleSide.addEventListener("click", () => {
+            if (openSidePanel == true) {
+                openSidePanel = false;
+                toggleLeft = 15;
+                currentLeft = 15;
+                editLeft = 15;
+                buttonLeft = 65
+                updateCanvasSize(editLeft);
+                updateSidePanel(0, buttonLeft, toggleLeft, currentLeft);
+            } else {
+                openSidePanel = true;
+                toggleLeft = 200;
+                currentLeft = 200;
+                editLeft = 200;
+                buttonLeft = 250;
+                updateCanvasSize(editLeft);
+                updateSidePanel(1, buttonLeft, toggleLeft, currentLeft);
+            }
+        });
+        
+        updateCanvasSize(200);
+        updateSidePanel(1, buttonLeft, toggleLeft, currentLeft);
+        window.addEventListener('resize', () => updateCanvasSize(editLeft));
+
+
+
+
+
+
+
+
+
+
+        // - Changing the Title of the canvas -----------------------------------------------------
+        const topTitleCanvas = this.root.querySelector(".top__current-canvas");
+
+        topTitleCanvas.addEventListener("blur", () => {
+            this.onCanvasEdit(this.savedActiveCanvas.id, topTitleCanvas.value);
+        });
+
+
+
+
+
+
+
+        // - Button to add a new note -------------------------------------------------------------
         const btnAddCavnas = this.root.querySelector(".canvas__add");
-        // - Adjusting the side__canvas based on its scrollHeight.
-        const sideCanvas = this.root.querySelector(".side__canvas");
-        const sideCanvasList = this.root.querySelector(".side__canvas-list");
 
         btnAddCavnas.addEventListener('click', () => {
             this.onCanvasAdd();
@@ -132,7 +218,11 @@ export default class CanvasListView {
 
 
 
-        // - Adjusting the side__canvas based on its scrollHeight.  ---------------------------------
+
+        // - Adjusting the side__canvas based on its scrollHeight.  -------------------------------
+        const sideCanvas = this.root.querySelector(".side__canvas");
+        const sideCanvasList = this.root.querySelector(".side__canvas-list");
+
         window.addEventListener('DOMContentLoaded', () => {
 
             const canvas = CanvasAPI.getAllCanvas();
@@ -173,20 +263,21 @@ export default class CanvasListView {
 
         
 
-        const btnAddCard = this.root.querySelector(".card__add");
-        const cardHolder = this.root.querySelector(".canvas__card-holder");
-        const canvasPreview = this.root.querySelector(".canvas__preview");
+
         
         
-
-
-        // - For Adding a Card -----------------------------------------------
+        
+        // - For Adding a Card --------------------------------------------------------------------
+        // const btnAddCard = this.root.querySelector(".card__add"); - Positioned on Top
+        
         btnAddCard.addEventListener('click', () => {
             this.onCardAdd();
         });
         
+        
+        // - For Deselecting a card ---------------------------------------------------------------
+        const cardHolder = this.root.querySelector(".canvas__card-holder");
 
-        // - For Deselecting a card ----------------------------------------------
         cardHolder.addEventListener('click', (event) => {
 
             const clickedElement = event.target;
@@ -211,22 +302,26 @@ export default class CanvasListView {
 
 
 
-        // - For Canvas Background Drawing ----------------------------------------------------------------------
+        // - For Canvas Background Drawing --------------------------------------------------------
+        
+        
 
         /* 
             - CLUE ... lines.forEach(line => drawLine(line.pointA, line.pointB));
             childCard.forEach(card => drawLine(parentCardPos, childCardPos))
+
+            - Use the commented code for reference later...
         */
         
 
-        const canvasDraw = this.root.querySelector(".canvas__draw");
-        const ctx = canvasDraw.getContext('2d');
-        let getCanvasPreviewStyle = window.getComputedStyle(canvasPreview);
+        // const canvasDraw = this.root.querySelector(".canvas__draw");
+        // const ctx = canvasDraw.getContext('2d');
+        // let getCanvasPreviewStyle = window.getComputedStyle(canvasPreview);
 
-        canvasDraw.style.left = "0";
-        canvasDraw.style.transform = "translate(0, 0)";
-        canvasDraw.width = parseInt(getCanvasPreviewStyle.width);
-        canvasDraw.height = parseInt(getCanvasPreviewStyle.height);
+        // canvasDraw.style.left = "0";
+        // canvasDraw.style.transform = "translate(0, 0)";
+        // canvasDraw.width = parseInt(getCanvasPreviewStyle.width);
+        // canvasDraw.height = parseInt(getCanvasPreviewStyle.height);
         
 
 
@@ -259,7 +354,7 @@ export default class CanvasListView {
 
 
 
-        // - For Dragging a Card -------------------------------------------------------------
+        // - For Dragging a Card ------------------------------------------------------------------
         
         const cardPreview = this.root.querySelector(".canvas__card-preview");
         let clickedCard;
@@ -274,9 +369,6 @@ export default class CanvasListView {
             
             clickedCard.style.left = `${cardLeft + e.movementX}px`;
             clickedCard.style.top = `${cardTop + e.movementY}px`;
-            // _drawArrow(cardLeft, cardTop);
-            // console.log(parseInt(clickedCard.style.left));
-            // console.log(cardLeft);
             
             
             if (e.movementX > 0 || e.movementY > 0 || e.movementX < 0 || e.movementY < 0){
@@ -329,7 +421,7 @@ export default class CanvasListView {
             let savedCardTop;
 
             
-            if (this.cardDragged) {
+            if (this.cardDragged && clickedElement.classList[0] == "canvas__card-item") {
                 
                 const dragged = true;
                 savedCardLeft = _onDrag(event).style.left;
@@ -389,7 +481,8 @@ export default class CanvasListView {
 
 
 
-        // // - For Canvas Background Drawing ----------------------------------------------------------------------
+        // // - For Canvas Background Drawing -----------------------------------------------------
+        // - Use the commented code for reference later...
 
         // const canvasDraw = this.root.querySelector(".canvas__draw");
         // const ctx = canvasDraw.getContext('2d');
@@ -453,6 +546,30 @@ export default class CanvasListView {
 
 
 
+
+
+
+
+    
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // - For drawing lines in the background for the cards. ---------------------------------------
+
     backgroundDrawing() {
 
         const getCardsInRoot = this.root.querySelectorAll(".canvas__card-item");
@@ -508,9 +625,6 @@ export default class CanvasListView {
     
     
     
-    
-    
-    
 
     
 
@@ -533,6 +647,7 @@ export default class CanvasListView {
 
 
 
+    
 
 
 
@@ -554,7 +669,7 @@ export default class CanvasListView {
 
 
 
-    // Update Canvas containers height adjustments -----------------------------------------------
+    // Update Canvas containers height adjustments ------------------------------------------------
 
     updateCanvasHeigth(canvas) {
 
@@ -613,7 +728,7 @@ export default class CanvasListView {
     
 
 
-    // - Adding a canvas inside the canvas-list ----------------------------------------------
+    // - Adding a canvas inside the canvas-list ---------------------------------------------------
 
     _createListItemHTML(id, title) {
 
@@ -722,12 +837,14 @@ export default class CanvasListView {
     activeCanvas(canvas) {
 
         const canvasItems = this.root.querySelectorAll(".side__canvas-item");
+        const topCanvasTitle = this.root.querySelector(".top__current-canvas");
 
         canvasItems.forEach((eachItems => {
             eachItems.classList.remove("side__canvas-item--selected");
         }));
 
         this.root.querySelector(`.side__canvas-item[data-canvas-id="${canvas.id}"]`).classList.add("side__canvas-item--selected");
+        topCanvasTitle.value = canvas.title;
 
 
 

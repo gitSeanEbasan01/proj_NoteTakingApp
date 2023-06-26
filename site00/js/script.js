@@ -151,6 +151,23 @@ const view = new CanvasListView(main, {
         }
 
     },
+    onCanvasEdit(id, title) {
+
+        const editCanvas = {
+            id: id,
+            title: title
+        };
+        saveCanvas(editCanvas);
+
+
+        
+        const updatedCanvas = getAllCanvas();
+
+        view.updateCanvasList(updatedCanvas);
+        view.canvasEventListeners();
+        view.updateCanvasHeigth(updatedCanvas);
+        
+    },
 
 
 
