@@ -91,7 +91,7 @@ export default class CanvasAPI{
         for (let i = 0; i < keys.length; i++) {
             const key = keys[i];
 
-            if (key.includes(`${id}`)) {
+            while (key.includes(`${id}`)) {
                 localStorage.removeItem(key);
                 break;
             }
@@ -112,14 +112,21 @@ export default class CanvasAPI{
         const canvas = CanvasAPI.getAllCanvas();
         const findCanvas = canvas.find(canva => canva.id == addedCanvas.id);
         
+        const randomKey = Math.random().toString(36).substring(2, 9);
+
         const generateCanvasKey = function() {
-            return 'notesapp-canvas-' + findCanvas.id + '_' + Math.random().toString(36).substring(2, 9);
+            return 'notesapp-canvas-' + findCanvas.id + '_' + randomKey;
+        };
+        const generateCanvasKey00 = function() {
+            return 'notesapp-canvas-' + 'prev-' + findCanvas.id + '_' + randomKey;
         };
 
 
 
         const newData = [];
+        const newData00 = [];
         localStorage.setItem(generateCanvasKey(), JSON.stringify(newData))
+        localStorage.setItem(generateCanvasKey00(), JSON.stringify(newData00));
 
     }
     

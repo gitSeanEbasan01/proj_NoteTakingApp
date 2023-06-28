@@ -39,12 +39,13 @@ export default class CardsAPI{
         [] Adding Main Canvas Feature for default or go to view.
         [] Canvas list animation.
         [] Options for canvas and cards (renaming, deleting, etc.)
-        {X} Problem
+        {} Problem
             [X] When the canvas is empty from deleting all of the cards, you're not able to click on the addCard button. Fix this.
+            [] When you delete a canvas that has no any other selected canvas, it gives an error. Fix this.
         {} IMPORTANT: Finish in the Week
             [X] Review Code.. Add Notes
-            [] Card Preview Edit
-                [] Make it draggable
+            [X] Card Preview Edit
+                [X] Make it draggable
             [] Movement of card holder
                 [] Panning
                 [] Zooming
@@ -127,7 +128,7 @@ export default class CardsAPI{
         for(let i = 0; i < keys.length; i++) {
             let key = keys[i];
 
-            if (key.includes(activeCanvas.id)) {
+            if (!key.includes('prev') && key.includes(activeCanvas.id)) {
                 const canvasData = JSON.parse(localStorage.getItem(key) || "[]");
                 return canvasData.sort((a, b) => {
                     return new Date(a.updated) > new Date(b.updated) ? -1 : 1;
@@ -159,7 +160,7 @@ export default class CardsAPI{
         for(let i = 0; i < keys.length; i++) {
             let key = keys[i];
 
-            if (key.includes(activeCanvas.id)) {
+            if (!key.includes('prev') && key.includes(activeCanvas.id)) {
                 keyName = key
                 break;
             }
@@ -184,7 +185,7 @@ export default class CardsAPI{
         for(let i = 0; i < keys.length; i++) {
             let key = keys[i];
 
-            if (key.includes(activeCanvas.id)) {
+            if (!key.includes('prev') && key.includes(activeCanvas.id)) {
                 keyName = key
                 break;
             }
@@ -193,9 +194,6 @@ export default class CardsAPI{
         localStorage.setItem(keyName, JSON.stringify(cardInCanvas));
         
     }
-
-
-
 
 
 
@@ -233,7 +231,7 @@ export default class CardsAPI{
         for(let i = 0; i < keys.length; i++) {
             let key = keys[i];
 
-            if (key.includes(activeCanvas.id)) {
+            if (!key.includes('prev') && key.includes(activeCanvas.id)) {
                 keyName = key
                 break;
             }
@@ -270,7 +268,7 @@ export default class CardsAPI{
         for(let i = 0; i < keys.length; i++) {
             let key = keys[i];
 
-            if (key.includes(activeCanvas.id)) {
+            if (!key.includes('prev') && key.includes(activeCanvas.id)) {
                 keyName = key
                 break;
             }
@@ -309,7 +307,7 @@ export default class CardsAPI{
         for(let i = 0; i < keys.length; i++) {
             let key = keys[i];
 
-            if (key.includes(activeCanvas.id)) {
+            if (!key.includes('prev') && key.includes(activeCanvas.id)) {
                 keyName = key
                 break;
             }
@@ -343,7 +341,7 @@ export default class CardsAPI{
         for(let i = 0; i < keys.length; i++) {
             let key = keys[i];
 
-            if (key.includes(activeCanvas.id)) {
+            if (!key.includes('prev') && key.includes(activeCanvas.id)) {
                 keyName = key
                 break;
             }
@@ -351,7 +349,142 @@ export default class CardsAPI{
 
         localStorage.setItem(keyName, JSON.stringify(removeCard));
 
+    }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    static getPreviewActiveCanvasData(activeCanvas) {
+
+        const keys = Object.keys(localStorage);
+
+        for(let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+
+            if (key.includes('prev') && key.includes(activeCanvas.id)) {
+                const canvasData = JSON.parse(localStorage.getItem(key) || "[]");
+                return canvasData.sort((a, b) => {
+                    return new Date(a.updated) > new Date(b.updated) ? -1 : 1;
+                });
+                break;
+            }
+        }
+        
+    }
+
+    static saveCardPreview(previewToSave, activeCanvas) {
+
+        const previewsInCanvas = CardsAPI.getPreviewActiveCanvasData(activeCanvas);
+        const existing = previewsInCanvas.find(preview => preview.id == previewToSave.id);
+
+        if (existing) {
+            existing.title = previewToSave.title;
+            existing.body = previewToSave.body;
+            existing.updated = new Date().toISOString();
+        } else {
+            previewToSave.updated = new Date().toISOString();
+            previewsInCanvas.push(previewToSave);
+        }
+
+
+
+
+
+        const keys = Object.keys(localStorage);
+        let keyName;
+
+        for(let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+
+            if (key.includes('prev') && key.includes(activeCanvas.id)) {
+                keyName = key
+                break;
+            }
+        }
+
+        localStorage.setItem(keyName, JSON.stringify(previewsInCanvas));
+        
+    }
+
+
+
+
+
+    static savePreviewPosition(previewToChangePosition, xPosition, yPosition, activeCanvas) {
+
+        const previewsInCanvas = CardsAPI.getPreviewActiveCanvasData(activeCanvas);
+        const findPreview = previewsInCanvas.find(card => card.id == previewToChangePosition.id)
+
+        if (findPreview) {
+            findPreview.positionX = xPosition;
+            findPreview.positionY = yPosition;
+            findPreview.updated = new Date().toISOString();
+        }
+        
+        
+        const keys = Object.keys(localStorage);
+        let keyName;
+
+        for(let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+
+            if (key.includes('prev') && key.includes(activeCanvas.id)) {
+                keyName = key
+                break;
+            }
+        }
+
+        localStorage.setItem(keyName, JSON.stringify(previewsInCanvas));
+
+    }
+
+
+
+
+
+    static deleteCardPreviewInCanvas(id, activeCanvas) {
+
+        const previewsInCanvas = CardsAPI.getPreviewActiveCanvasData(activeCanvas);
+        const removePreview = previewsInCanvas.filter(preview => preview.id != id);
+
+        const keys = Object.keys(localStorage);
+        let keyName;
+
+        for(let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+
+            if (key.includes('prev') && key.includes(activeCanvas.id)) {
+                keyName = key
+                break;
+            }
+        }
+
+        localStorage.setItem(keyName, JSON.stringify(removePreview));
+        
     }
     
     

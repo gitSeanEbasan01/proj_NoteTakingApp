@@ -5,7 +5,7 @@ import CardsAPI from "./cardsAPI.js";
 
 const main = document.getElementById("app");
 const { getAllCanvas, saveCanvas, deleteCanvas, createCanvasData } = CanvasAPI;
-const { getAllCards, getActiveCanvasData, saveCardToCanvas, saveChildCardToCanvas, deleteCardInCanvas, saveActiveCard, saveInactiveCard } = CardsAPI;
+const { getAllCards, getActiveCanvasData, saveCardToCanvas, saveChildCardToCanvas, deleteCardInCanvas, saveActiveCard, saveInactiveCard, getPreviewActiveCanvasData, saveCardPreview, savePreviewPosition, deleteCardPreviewInCanvas } = CardsAPI;
 
 const canvas = getAllCanvas();
 
@@ -41,20 +41,11 @@ const view = new CanvasListView(main, {
 
 
         view.updateCardsList(getActiveCanvasData(currentActiveCanvas));
+        view.updateCardPreview(getPreviewActiveCanvasData(currentActiveCanvas));
         view.canvasPreviewEventListeners();
+        view.cardPreviewEventListeners();
 
 
-        // - For updating if a card preview should appear. -----------------
-        const getCards = getActiveCanvasData(currentActiveCanvas)
-        const findActiveCard = getCards.find(card => card.selected == true)
-        if (findActiveCard) {
-            view.updateCardPreview(findActiveCard);
-            view.cardPreviewEventListeners();
-        } else {
-            view.updateCardPreview(undefined);
-        }
-
-        // currentActiveCard = undefined;
         view.backgroundDrawing();
 
     },
@@ -92,16 +83,6 @@ const view = new CanvasListView(main, {
         view.canvasPreviewEventListeners();
 
 
-        // - For updating if a card preview should appear. -----------------
-        const getCards = getActiveCanvasData(currentActiveCanvas)
-        const findActiveCard = getCards.find(card => card.selected == true)
-        if (findActiveCard) {
-            view.updateCardPreview(findActiveCard);
-            view.cardPreviewEventListeners();
-        } else {
-            view.updateCardPreview(undefined);
-        }
-
         view.backgroundDrawing();
 
     },
@@ -135,14 +116,9 @@ const view = new CanvasListView(main, {
 
 
             // - For updating if a card preview should appear. -----------------
-            const getCards = getActiveCanvasData(currentActiveCanvas)
-            const findActiveCard = getCards.find(card => card.selected == true)
-            if (findActiveCard) {
-                view.updateCardPreview(findActiveCard);
-                view.cardPreviewEventListeners();
-            } else {
-                view.updateCardPreview(undefined);
-            }
+            view.updateCardPreview(getPreviewActiveCanvasData(currentActiveCanvas));
+            view.canvasPreviewEventListeners();
+            view.cardPreviewEventListeners();
 
             view.backgroundDrawing();
             
@@ -168,6 +144,13 @@ const view = new CanvasListView(main, {
         view.updateCanvasHeigth(updatedCanvas);
         
     },
+
+
+
+
+
+
+
 
 
 
@@ -289,23 +272,31 @@ const view = new CanvasListView(main, {
         
         // deleteCards(id);
         deleteCardInCanvas(id, currentActiveCanvas);
+        deleteCardPreviewInCanvas(id, currentActiveCanvas);
         
         
-        // const updatedCards = getAllCards();
+
         const updatedCards = getActiveCanvasData(currentActiveCanvas);
         
         view.updateCardsList(updatedCards);
+        view.updateCardPreview(getPreviewActiveCanvasData(currentActiveCanvas));
         view.canvasPreviewEventListeners();
+        view.cardPreviewEventListeners();
 
         view.backgroundDrawing();
 
     },
     onCardView(id) {
 
-        const getCardInCanvas = getActiveCanvasData(currentActiveCanvas);
-        const findCard = getCardInCanvas.find(card => card.id == id);
-        
-        view.updateCardPreview(findCard);
+        // const getCardInCanvas = getActiveCanvasData(currentActiveCanvas);
+        const getPreviewsInCanvas = getPreviewActiveCanvasData(currentActiveCanvas);
+        // const findCard = getCardInCanvas.filter(card => card.id == id);
+
+        // const newPreview = {
+
+        // };
+
+        view.updateCardPreview(getPreviewsInCanvas);
         view.canvasPreviewEventListeners();
         view.cardPreviewEventListeners();
         
@@ -328,7 +319,72 @@ const view = new CanvasListView(main, {
         
     },
 
+
+
+
+
+
+
+
+
+
+
+    // ---------------------------------- CARD PREVIEW ----------------------------------
+
+
+    onAddCardPreview(id, title, body) {
+
+        const canvasPreview = view.root.querySelector(".canvas__preview");
+        const getCanvasStyle = window.getComputedStyle(canvasPreview);
+
+        const previewsInCanvas = CardsAPI.getPreviewActiveCanvasData(currentActiveCanvas);
+        const existing = previewsInCanvas.find(preview => preview.id == id);
+        let posX;
+        let posY;
+        if (existing) {
+            const generatedPosX = existing.positionX;
+            const generatedPosY = existing.positionY;
+            posX = generatedPosX;
+            posY = generatedPosY;
+        } else {
+            const generatedPosX = `${Math.floor(Math.random() * parseInt(getCanvasStyle.width))}px`;
+            const generatedPosY = `${Math.floor(Math.random() * parseInt(getCanvasStyle.height))}px`;
+            posX = generatedPosX;
+            posY = generatedPosY;
+        }
+
+        const newPreview = {
+            id: id,
+            selected: true,
+            title: title,
+            body: body,
+            updated: "",
+            positionX: posX,
+            positionY: posY,
+        };
+        saveCardPreview(newPreview, currentActiveCanvas);
+        
+        const updatedPreviews = getPreviewActiveCanvasData(currentActiveCanvas);
+
+        view.updateCardPreview(updatedPreviews);
+        view.canvasEventListeners();
+        view.cardPreviewEventListeners();
+        
+    },
+    onDeleteCardPreview(id) {
+
+        deleteCardPreviewInCanvas(id, currentActiveCanvas);
+
+        const updatedPreviews = getPreviewActiveCanvasData(currentActiveCanvas);
+
+        view.updateCardPreview(updatedPreviews);
+        view.canvasEventListeners();
+        view.cardPreviewEventListeners();
+        
+    }
+
 });
+
 
 
 
