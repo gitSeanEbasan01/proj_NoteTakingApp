@@ -39,9 +39,10 @@ export default class CanvasListView {
             <div class="side-panel">
 
                 <div class="side__profile">
-                    <img src="" alt="Profile Picture">
-                    <div class="side__profile-name">Sean Ebasan</div>
-                    <div class="side__profile-status">Online</div>
+                    <div class="side__profile-picture">
+                        <img class="profile-image" src="./img/personIcon.png" alt="Profile Image">
+                    </div>
+                    <div class="side__profile-name">Sean Quirben S. Ebasan</div>
                 </div>
 
 

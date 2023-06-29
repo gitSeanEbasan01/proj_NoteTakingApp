@@ -45,7 +45,8 @@ export default class CardsAPI{
         {} IMPORTANT: Finish in the Week
             [X] Review Code.. Add Notes
             [X] Card Preview Edit
-                [X] Make it draggable
+                [X] Make it draggable.
+                [] Fix some bugs.
             [] Movement of card holder
                 [] Panning
                 [] Zooming
