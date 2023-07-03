@@ -52,10 +52,9 @@ export default class CardsAPI{
                 [] Zooming
             [X] Renaming of Canvas
                 [X] Changing Canvas title
-            [] Profile Picture
-                [] Change Photo
-                [] Change Name
-                [] Change to Offline
+            [X] Profile Picture
+                [X] Change Photo
+                [X] Change Name
             [] Short Tutorial
             [X] Toggle Side panel button
             [] Media Query

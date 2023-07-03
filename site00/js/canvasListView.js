@@ -3,7 +3,7 @@ import CardsAPI from "./cardsAPI.js";
 
 export default class CanvasListView {
 
-    constructor(root, { onActiveCanvas, onCanvasSelect, onCanvasAdd, onCanvasDelete, onCanvasEdit, onActiveCard, onCardSelect, onCardDeselect, onCardAdd, onChildCardAdd, onCardDelete, onCardView, onCardEdit, onAddCardPreview, onDeleteCardPreview } = {}) {
+    constructor(root, { onActiveCanvas, onCanvasSelect, onCanvasAdd, onCanvasDelete, onCanvasEdit, onActiveCard, onCardSelect, onCardDeselect, onCardAdd, onChildCardAdd, onCardDelete, onCardView, onCardEdit, onAddCardPreview, onDeleteCardPreview, onSaveName, onSaveProfPic } = {}) {
         this.root = root;
         this.onActiveCanvas = onActiveCanvas;
         this.onCanvasSelect = onCanvasSelect;
@@ -23,6 +23,9 @@ export default class CanvasListView {
         this.onAddCardPreview = onAddCardPreview;
         this.onDeleteCardPreview = onDeleteCardPreview;
 
+        this.onSaveName = onSaveName;
+        this.onSaveProfPic = onSaveProfPic;
+
         this.cardDragged = false;
         this.inputFocused = false;
         this.savedActiveCanvas;
@@ -40,9 +43,10 @@ export default class CanvasListView {
 
                 <div class="side__profile">
                     <div class="side__profile-picture">
-                        <img class="profile-image" src="./img/personIcon.png" alt="Profile Image">
+                        <img class="profile-image" src="./img/personIcon01.png" alt="Profile Image">
+                        <input type="file" class="profile-input" accept="image/*">
                     </div>
-                    <div class="side__profile-name">Sean Quirben S. Ebasan</div>
+                    <div class="side__profile-name"></div>
                 </div>
 
 
@@ -111,6 +115,96 @@ export default class CanvasListView {
 
 
 
+
+        // - Change Profile Picture ---------------------------------------------------------------
+
+        const profImage = this.root.querySelector(".profile-image");
+        const profileInput = this.root.querySelector(".profile-input");
+        
+        profImage.addEventListener('click', () => {
+            profileInput.click();
+        });
+
+        profileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            
+            reader.readAsDataURL(file);
+
+            reader.onload = (e) => {
+                const imageData = e.target.result;
+                this.onSaveProfPic(imageData);
+            };
+
+        });
+
+
+        // - Changing Profile Name ----------------------------------------------------------------
+
+        const profileName = this.root.querySelector(".side__profile-name");
+        const htmlRoot = this.root;
+        let profileNameChange;
+        let profileNameInput;
+        let profileInputKey;
+        let profileNameBackground;
+
+        const _createNameInput = () => {
+
+            return `
+                <div class="change-profile-name">
+                    <div class="profile-name__background"></div>
+                    <div class="profile-name__input-container">
+                        <h1 class="input-title">Type Your Name</h1>
+                        <input class="name-input" type="text" placeholder="Your Name Here...">
+                    </div>
+                </div>
+            `;
+            
+        };
+
+        const _addEvent = () => {
+            profileNameBackground.addEventListener('click', () => {
+                profileNameChange.remove();
+                profileNameChange = undefined;
+                window.removeEventListener('resize', leftTopUpdate);
+            });
+            profileInputKey = this.root.querySelector(".name-input");
+            profileInputKey.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    this.onSaveName(profileInputKey.value);
+                    profileInputKey.blur();
+
+                    profileNameChange.remove();
+                    profileNameChange = undefined;
+                    window.removeEventListener('resize', leftTopUpdate);
+                }
+            });
+        };
+        const leftTopUpdate = () => {
+            profileNameChange.style.width = window.innerWidth.toString() + "px";
+            profileNameChange.style.height = window.innerHeight.toString() + "px";
+
+            profileNameInput.style.left = `${window.innerWidth.toString() / 2}px`;
+            profileNameInput.style.top = `${window.innerHeight.toString() * 0.47}px`;
+        };
+
+        profileName.addEventListener('click', () => {
+            const addHTML = _createNameInput();
+            htmlRoot.insertAdjacentHTML("afterbegin", addHTML);
+
+            profileNameChange = this.root.querySelector(".change-profile-name");
+            profileNameChange.style.width = window.innerWidth.toString() + "px";
+            profileNameChange.style.height = window.innerHeight.toString() + "px";
+
+            profileNameInput = this.root.querySelector(".profile-name__input-container");
+            profileNameInput.style.left = `${window.innerWidth.toString() / 2}px`;
+            profileNameInput.style.top = `${window.innerHeight.toString() * 0.45}px`;
+
+            profileNameBackground = this.root.querySelector(".profile-name__background");
+            
+            _addEvent();
+            window.addEventListener('resize', leftTopUpdate);
+        });
 
 
 
@@ -607,9 +701,21 @@ export default class CanvasListView {
 
 
 
+    updatePicture(imageData) {
 
+        const profImage = this.root.querySelector(".profile-image");
 
+        profImage.src = imageData
+        
+    }
 
+    updateName(name) {
+
+        const sideProfileName = this.root.querySelector(".side__profile-name");
+
+        sideProfileName.innerHTML = name;
+        
+    }
 
 
 

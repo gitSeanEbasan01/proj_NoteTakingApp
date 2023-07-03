@@ -1,11 +1,13 @@
 import CanvasAPI from "./canvasAPI.js";
 import CanvasListView from "./canvasListView.js";
 import CardsAPI from "./cardsAPI.js";
+import ProfileAPI from "./profileAPI.js";
 
 
 const main = document.getElementById("app");
 const { getAllCanvas, saveCanvas, deleteCanvas, createCanvasData } = CanvasAPI;
 const { getAllCards, getActiveCanvasData, saveCardToCanvas, saveChildCardToCanvas, deleteCardInCanvas, saveActiveCard, saveInactiveCard, getPreviewActiveCanvasData, saveCardPreview, savePreviewPosition, deleteCardPreviewInCanvas } = CardsAPI;
+const { getProfilePic, getProfileName, saveProfilePic, saveProfileName } = ProfileAPI;
 
 const canvas = getAllCanvas();
 
@@ -381,6 +383,39 @@ const view = new CanvasListView(main, {
         view.canvasEventListeners();
         view.cardPreviewEventListeners();
         
+    }, 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    onSaveName(name) {
+
+        saveProfileName(name);
+
+        view.updateName(name);
+        
+    },
+    onSaveProfPic(imageData) {
+
+        saveProfilePic(imageData);
+
+        view.updatePicture(imageData);
+        
     }
 
 });
@@ -411,7 +446,8 @@ if (canvas.length > 0 && currentActiveCanvas != undefined) {
 view.canvasEventListeners();
 
 
-
+view.updatePicture(getProfilePic());
+view.updateName(getProfileName());
 
 
 
